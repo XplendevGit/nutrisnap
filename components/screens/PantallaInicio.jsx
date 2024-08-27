@@ -22,40 +22,40 @@ const PantallaInicio = ({
       <StatusBar style="light" />
       
       <Image 
-        style={{ position: 'absolute', height: '100%', width: '100%' }} // Ajuste aquí
+        className="absolute w-full h-full"
         source={backgroundImage}
         resizeMode="cover" // Asegura que la imagen se ajuste bien
       />
 
       <View className="flex w-full h-[200px] mb-[200px] space-y-4 items-center"> 
         <TouchableOpacity
-          style={{ height: hp(7), width: wp(80), backgroundColor: '#388E3C', borderRadius: 50, justifyContent: 'center', alignItems: 'center' }}
+          className="flex h-[56px] w-[300px] bg-[#388E3C] rounded-full mx-auto justify-center items-center"
           onPress={onLoginPress}
         >
-          <Text style={{ color: '#FFFFFF', fontSize: hp(2) }}>
+          <Text className="text-[#FFFFFF] text-[16px]">
             {loginText}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={{ height: hp(7), width: wp(80), backgroundColor: '#81C784', borderRadius: 50, justifyContent: 'center', alignItems: 'center' }}
+          className="flex h-[56px] w-[300px] bg-[#81C784] rounded-full mx-auto justify-center items-center"
           onPress={onRegisterPress}
         >
-          <Text style={{ color: '#333333', fontSize: hp(2) }}>
+          <Text className="text-[#333333] text-[16px]">
             {registerText}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={{ alignItems: 'center', paddingBottom: 12 }}>
+      <View className="flex items-center pb-6">
         <Text style={{ fontSize: hp(2.5), color: '#4CAF50' }}>
           {footerText.split(' ').map((word, index) => (
             <Text key={index}>
-              {word === "mejor" || word === "salud" ? <Text style={{ fontWeight: 'bold' }}>{word} </Text> : `${word} `}
+              {word === "mejor" || word === "salud" ? <Text className="font-bold" >{word} </Text> : `${word} `}
             </Text>
           ))}
         </Text>
-        <Text style={{ fontSize: hp(2.5), color: '#4CAF50' }}>
+        <Text className="text-[#4CAF50] text-[20px]">
           {footerSubText}
         </Text>
       </View>
