@@ -25,32 +25,40 @@ const ScreenHome = ({
       >
         <StatusBar style="light" />
         
+        {/* Imagen de Fondo del Home */}
         <Image 
           className="absolute w-full h-full"
           source={backgroundImage}
           resizeMode="cover" 
         />
 
+        {/* Vista de TextInput Usuario */}
         <View className="flex w-full h-[100px] mb-[200px] space-y-4 items-center justify-center"> 
           <TextInput
             className="flex h-[56px] w-[300px] bg-[#f1f1f1] rounded-full px-4"
             placeholder="Usuario"
             placeholderTextColor="#888"
           />
+
+          {/* Vista de TextInput Contraseña */}
           <TextInput
             className="flex h-[56px] w-[300px] bg-[#f1f1f1] rounded-full px-4"
             placeholder="Contraseña"
             placeholderTextColor="#888"
             secureTextEntry
           />
+
+          {/* Vista de Botón Iniciar Sesión */}
           <TouchableOpacity
             className="flex h-[56px] w-[300px] bg-[#388E3C] rounded-full mx-auto justify-center items-center"
-            onPress={onLoginPress}
+            onPress={() => router.push('../screens/screenProfile')}
           >
             <Text className="text-[#FFFFFF] text-[16px]">
               {loginText}
             </Text>
           </TouchableOpacity>
+
+          {/* Vista de Botón Iniciar Sesión Google */}
           <TouchableOpacity
             className="flex flex-row items-center justify-center h-[56px] w-[300px] bg-[#F57C00] rounded-full mx-auto"
             onPress={() => console.log('Iniciar sesión con Google')}
@@ -61,6 +69,7 @@ const ScreenHome = ({
             </Text>
           </TouchableOpacity>
 
+          {/* Vista de Botón Registrarse */}
           <TouchableOpacity
             className="flex h-[56px] w-[300px] bg-[#81C784] rounded-full mx-auto justify-center items-center"
             onPress={() => router.push('../screens/screenRegister')}
