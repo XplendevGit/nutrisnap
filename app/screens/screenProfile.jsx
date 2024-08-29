@@ -69,7 +69,8 @@ const ScreenProfile = ({
         </TouchableOpacity>
 
         <TextInput
-          style={{ marginTop: 16, width: '80%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
+          className="rounded-full"
+          style={{ marginTop: 16, width: '80%', height: 40, backgroundColor: '#f1f1f1', paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
           placeholder="Nombre"
           value={name}
           editable={false}
@@ -82,7 +83,8 @@ const ScreenProfile = ({
         {/* Age Selector */}
         <Text style={{ marginTop: 16 }}>Edad:</Text>
         <TextInput
-          style={{ width: '80%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
+          className="rounded-full"
+          style={{ width: '80%', height: 40, backgroundColor: '#f1f1f1', paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
           placeholder="Edad"
           value={age}
           editable={false}
@@ -91,9 +93,13 @@ const ScreenProfile = ({
 
         {/* Weight and Height */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 16 }}>
-          <View style={{ width: '48%' }}>
-            <Text>Peso (kg):</Text>
+          <View 
+            className="space-y-2"
+            style={{ width: '48%' }}>
+            <Text 
+            className="text-center">Peso (kg):</Text>
             <TextInput
+              className="rounded-full"
               style={{ width: '100%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
               placeholder="Peso (kg)"
               value={weight}
@@ -101,10 +107,14 @@ const ScreenProfile = ({
               placeholderTextColor="#888"
             />
           </View>
-          <View style={{ width: '48%' }}>
-            <Text>Estatura (cm):</Text>
+          <View 
+            className="space-y-2"
+            style={{ width: '48%' }}>
+            <Text 
+               className="text-center">Estatura (cm):</Text>
             <TextInput
-              style={{ width: '100%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
+              className="rounded-full"
+              style={{ width: '100%', height: 40, backgroundColor: '#f1f1f1', paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
               placeholder="Estatura (cm)"
               value={height}
               editable={false}
