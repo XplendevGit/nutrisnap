@@ -4,28 +4,23 @@ import { StatusBar } from 'expo-status-bar';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
-import { AntDesign, Feather } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import Carousel from 'react-native-reanimated-carousel';
 
 const ScreenProfile = ({
   avatar = require('../../assets/images/favicon.png'),
-  name = '',
-  username = '',
-  email = '',
-  age = '',
-  weight = '',
-  height = '',
-  goal = '',
-  illnesses = '',
+  name = 'Nombre de ejemplo',
+  username = 'Usuario de ejemplo',
+  email = 'email@ejemplo.com',
+  age = '28 Años',
+  weight = '89 kg',
+  height = '170 cm',
+  goal = 'Ganar Masa Muscular',
+  illnesses = 'No Registra Enfermedades',
 }) => {
   const router = useRouter();
   const [selectedAvatar, setSelectedAvatar] = useState(avatar);
-  const [editableName, setEditableName] = useState(name);
-  const [editableAge, setEditableAge] = useState(age);
-  const [editableWeight, setEditableWeight] = useState(weight);
-  const [editableHeight, setEditableHeight] = useState(height);
-  const [editableGoal, setEditableGoal] = useState(goal);
-  const [editableIllnesses, setEditableIllnesses] = useState(illnesses);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -40,11 +35,16 @@ const ScreenProfile = ({
     }
   };
 
+  const carouselItems = [
+    { title: 'Noticia 1', image: require('../../assets/images/favicon.png') },
+    { title: 'Noticia 2', image: require('../../assets/images/favicon.png') },
+    { title: 'Noticia 3', image: require('../../assets/images/favicon.png') },
+  ];
+
   return (
     <Animated.View 
-      className="pt-12"
       entering={FadeInDown.delay(100).springify()} 
-      style={{ flex: 1, backgroundColor: '#ffffff' }}
+      style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 40 }}
     >
       <StatusBar style="dark" />
 
@@ -59,87 +59,94 @@ const ScreenProfile = ({
       </View>
 
       {/* Profile */}
-      <ScrollView>
-        <View className="flex items-center mt-6">
-          <TouchableOpacity onPress={pickImage}>
-            <Image
-              source={selectedAvatar}
-              style={{ width: 100, height: 100, borderRadius: 50 }}
-              resizeMode="cover"
-            />
-          </TouchableOpacity>
-
-          <TextInput
-            className="mt-4 w-[80%] h-[40px] bg-[#f1f1f1] rounded-lg px-4 text-center"
-            placeholder="Nombre"
-            value={editableName}
-            onChangeText={setEditableName}
+      <ScrollView contentContainerStyle={{ alignItems: 'center' }}>
+        <TouchableOpacity onPress={pickImage}>
+          <Image
+            source={selectedAvatar}
+            style={{ width: 100, height: 100, borderRadius: 50, marginTop: 16 }}
+            resizeMode="cover"
           />
+        </TouchableOpacity>
 
-          <Text className="text-gray-500 mt-2">Usuario: {username}</Text>
-          <Text className="text-gray-500">Correo: {email}</Text>
+        <TextInput
+          style={{ marginTop: 16, width: '80%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
+          placeholder="Nombre"
+          value={name}
+          editable={false}
+          placeholderTextColor="#888"
+        />
 
-          {/* Age Selector */}
-          <Text className="mt-4">Edad:</Text>
-          <TextInput
-            className="w-[80%] h-[40px] bg-[#f1f1f1] rounded-lg px-4 text-center"
-            placeholder="Edad"
-            value={editableAge}
-            onChangeText={setEditableAge}
-            keyboardType="numeric"
-            maxLength={2}
-          />
+        <Text style={{ color: '#888', marginTop: 8 }}>Usuario: {username}</Text>
+        <Text style={{ color: '#888' }}> Correo: {email}</Text>
 
-          {/* Weight and Height */}
-          <View className="flex flex-row justify-between w-[80%] mt-4">
+        {/* Age Selector */}
+        <Text style={{ marginTop: 16 }}>Edad:</Text>
+        <TextInput
+          style={{ width: '80%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
+          placeholder="Edad"
+          value={age}
+          editable={false}
+          placeholderTextColor="#888"
+        />
+
+        {/* Weight and Height */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginTop: 16 }}>
+          <View style={{ width: '48%' }}>
+            <Text>Peso (kg):</Text>
             <TextInput
-              className="w-[48%] h-[40px] bg-[#f1f1f1] rounded-lg px-4 text-center"
+              style={{ width: '100%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
               placeholder="Peso (kg)"
-              value={editableWeight}
-              onChangeText={setEditableWeight}
-              keyboardType="numeric"
-            />
-            <TextInput
-              className="w-[48%] h-[40px] bg-[#f1f1f1] rounded-lg px-4 text-center"
-              placeholder="Estatura (cm)"
-              value={editableHeight}
-              onChangeText={setEditableHeight}
-              keyboardType="numeric"
+              value={weight}
+              editable={false}
+              placeholderTextColor="#888"
             />
           </View>
-
-          {/* Goal */}
-          <Text className="mt-4">Objetivo:</Text>
-          <TextInput
-            className="w-[80%] h-[80px] bg-[#f1f1f1] rounded-lg px-4 text-center"
-            placeholder="Escribe tu objetivo (max 150 caracteres)"
-            value={editableGoal}
-            onChangeText={setEditableGoal}
-            multiline
-            maxLength={150}
-          />
-
-          {/* Illnesses */}
-          <Text className="mt-4">Enfermedades:</Text>
-          <TextInput
-            className="w-[80%] h-[40px] bg-[#f1f1f1] rounded-lg px-4 text-center"
-            placeholder="Escribe tus enfermedades"
-            value={editableIllnesses}
-            onChangeText={setEditableIllnesses}
-          />
-
+          <View style={{ width: '48%' }}>
+            <Text>Estatura (cm):</Text>
+            <TextInput
+              style={{ width: '100%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
+              placeholder="Estatura (cm)"
+              value={height}
+              editable={false}
+              placeholderTextColor="#888"
+            />
+          </View>
         </View>
 
+        {/* Goal */}
+        <Text style={{ marginTop: 16 }}>Objetivo:</Text>
+        <TextInput
+          style={{ width: '80%', height: 80, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', textAlignVertical: 'center', color: '#000000' }}
+          placeholder="Escribe tu objetivo (max 150 caracteres)"
+          value={goal}
+          editable={false}
+          multiline
+          placeholderTextColor="#888"
+        />
+
+        {/* Illnesses */}
+        <Text style={{ marginTop: 16 }}>Enfermedades:</Text>
+        <TextInput
+          style={{ width: '80%', height: 40, backgroundColor: '#f1f1f1', borderRadius: 8, paddingHorizontal: 16, textAlign: 'center', color: '#000000' }}
+          placeholder="Escribe tus enfermedades"
+          value={illnesses}
+          editable={false}
+          placeholderTextColor="#888"
+        />
+
         {/* Footer Carousel */}
-        <View className="mt-8 mx-12">
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} pagingEnabled>
-            {/* Ejemplo de imágenes */}
-            {[...Array(5)].map((_, index) => (
-              <TouchableOpacity key={index} className="mr-2">
-                <Image source={require('../../assets/images/favicon.png')} style={{ width: wp(90), height: 200 }} />
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+        <View style={{ marginTop: 32, width: '90%' }}>
+          <Carousel
+            width={wp(90)}
+            height={200}
+            data={carouselItems}
+            renderItem={({ item }) => (
+              <View style={{ backgroundColor: '#ffffff', borderRadius: 8, padding: 10 }}>
+                <Image source={item.image} style={{ width: '100%', height: 160, borderRadius: 8 }} />
+                <Text style={{ color: '#388E3C', textAlign: 'center', marginTop: 5 }}>{item.title}</Text>
+              </View>
+            )}
+          />
         </View>
       </ScrollView>
     </Animated.View>
