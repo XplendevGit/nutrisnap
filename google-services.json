@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "788967847700",
+    "project_id": "nutrisnap-eb042",
+    "storage_bucket": "nutrisnap-eb042.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788967847700:android:0e7b7586993b8d01027401",
+        "android_client_info": {
+          "package_name": "com.galaxies.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "788967847700-ue5jduh7idg27c5d26i7hq7m4t0ch9l4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV05LTtE7RR05ij-PxFSSLTyEiwETVWuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "788967847700-ue5jduh7idg27c5d26i7hq7m4t0ch9l4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "788967847700-58rf51rfcokr6i4773o7t7q3vjq2up4a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.galaxies.firebase"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
