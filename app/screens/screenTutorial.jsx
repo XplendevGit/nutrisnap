@@ -66,10 +66,10 @@ const ScreenTutorial = () => {
       tutorialData[index].action();
     }
     if (tutorialData[index].buttonText === "Ir a Login") {
-      router.push('./ScreenLogin');
+      router.push('../screens/screenLogin');
     }
     if (tutorialData[index].buttonText === "Iniciar") {
-      router.push('./ScreenMain');
+      router.push('../screens/screenMain');
     }
   };
 

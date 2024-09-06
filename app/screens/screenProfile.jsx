@@ -21,6 +21,7 @@ const ScreenProfile = ({
 }) => {
   const router = useRouter();
   const [selectedAvatar, setSelectedAvatar] = useState(avatar);
+  
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

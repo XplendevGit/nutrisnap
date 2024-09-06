@@ -14,6 +14,9 @@ import * as WebBrowser from 'expo-web-browser';
 // Necesario para expo-auth-session
 WebBrowser.maybeCompleteAuthSession();
 
+// Importa la imagen de fondo
+const backgroundImage = require('../../assets/images/Fondo1.png');
+
 const ScreenLogin = ({
   backgroundImage,
   onLoginPress,
@@ -86,7 +89,7 @@ const ScreenLogin = ({
           
           {/* Imagen de Fondo del Home */}
           <Image 
-            className="absolute w-full h-full"
+            style={{ position: 'absolute', width: '100%', height: '100%' }} 
             source={backgroundImage}
             resizeMode="cover" 
           />
