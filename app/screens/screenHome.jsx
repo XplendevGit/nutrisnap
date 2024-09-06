@@ -5,9 +5,9 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { AntDesign } from '@expo/vector-icons'; // Importa el ícono de Google desde React Icons
+import { AntDesign } from '@expo/vector-icons';
 import { auth } from '../../firebase-config'; // Importa auth desde firebase.config
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 const ScreenHome = ({
   backgroundImage,
@@ -18,37 +18,32 @@ const ScreenHome = ({
   footerText = "Elige lo mejor para tu salud",
   footerSubText = "Un vistazo es suficiente!",
 }) => {
-
-  //Estados
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState('');
 
-  const handleCreateAccount = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log('Cuenta creada');
-        const user = userCredential.user;
-        console.log(user);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+  const handleGoogleSignIn = () => {
+
+    alert('Implementación en Curso')
+
   };
-  
+
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log('Inicio Correcto!');
         const user = userCredential.user;
+        router.push('./screenProfile'); // Navegar a la pantalla de perfil
         console.log(user);
       })
       .catch((error) => {
+        alert('Introduza un Email o Contraseña Validos')
         console.log(error.message);
       });
   };
 
   const router = useRouter();
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView style={{ flex: 1 }}>
@@ -65,11 +60,11 @@ const ScreenHome = ({
             resizeMode="cover" 
           />
 
-          {/* Vista de TextInput Usuario */}
+          {/* Vista de TextInput Email */}
           <View className="flex w-full h-[100px] mb-[200px] space-y-4 items-center justify-center"> 
             <TextInput
               className="flex h-[56px] w-[300px] bg-[#f1f1f1] rounded-full px-4"
-              placeholder="Usuario"
+              placeholder="Email"
               placeholderTextColor="#888"
               onChangeText={(text) => setEmail(text)}
             />
@@ -93,14 +88,14 @@ const ScreenHome = ({
               </Text>
             </TouchableOpacity>
 
-            {/* Vista de Botón Crear Cuenta */}
+            {/* Vista de Botón Iniciar Con Google */}
             <TouchableOpacity
               className="flex flex-row items-center justify-center h-[56px] w-[300px] bg-[#F57C00] rounded-full mx-auto"
-              onPress={handleCreateAccount}
+              onPress={handleGoogleSignIn}
             >
               <AntDesign name="google" size={24} color="#FFFFFF" />
               <Text className="text-[#FFFFFF] text-[16px] ml-2">
-                Crear Cuenta
+                Iniciar Sesión con Google
               </Text>
             </TouchableOpacity>
 
