@@ -8,6 +8,11 @@ import { useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import { auth } from '../../firebase-config'; // Importa auth desde firebase.config
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+
+// Necesario para expo-auth-session
+WebBrowser.maybeCompleteAuthSession();
 
 const ScreenHome = ({
   backgroundImage,
@@ -22,12 +27,40 @@ const ScreenHome = ({
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState('');
 
-  const handleGoogleSignIn = () => {
+  // Configuración de Google Sign-In con expo-auth-session
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId: 'YOUR_EXPO_CLIENT_ID.apps.googleusercontent.com',
+    iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
+    androidClientId: 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com',
+    webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
+  });
 
-    alert('Implementación en Curso')
+  const router = useRouter();
 
+  // Función para manejar el SignIn con Google
+  const handleGoogleSignIn = async () => {
+    const result = await promptAsync();
+    if (result.type === 'success') {
+      const { id_token } = result.params;
+
+      // Crear credenciales para Firebase con el token de Google
+      const credential = GoogleAuthProvider.credential(id_token);
+
+      // Iniciar sesión en Firebase con Google
+      signInWithCredential(auth, credential)
+        .then((userCredential) => {
+          console.log('Inicio de sesión con Google exitoso', userCredential.user);
+          router.push('./screenProfile'); // Navegar a la pantalla de perfil
+        })
+        .catch((error) => {
+          console.error('Error en la autenticación con Google:', error);
+        });
+    } else {
+      console.log('Google SignIn cancelado o fallido');
+    }
   };
 
+  // Función para manejar el inicio de sesión con correo y contraseña
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -37,12 +70,10 @@ const ScreenHome = ({
         console.log(user);
       })
       .catch((error) => {
-        alert('Introduza un Email o Contraseña Validos')
+        alert('Introduza un Email o Contraseña Validos');
         console.log(error.message);
       });
   };
-
-  const router = useRouter();
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -92,6 +123,7 @@ const ScreenHome = ({
             <TouchableOpacity
               className="flex flex-row items-center justify-center h-[56px] w-[300px] bg-[#F57C00] rounded-full mx-auto"
               onPress={handleGoogleSignIn}
+              disabled={!request}
             >
               <AntDesign name="google" size={24} color="#FFFFFF" />
               <Text className="text-[#FFFFFF] text-[16px] ml-2">
