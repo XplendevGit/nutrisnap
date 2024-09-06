@@ -18,7 +18,6 @@ WebBrowser.maybeCompleteAuthSession();
 const backgroundImage = require('../../assets/images/Fondo1.png');
 
 const ScreenLogin = ({
-  backgroundImage,
   onLoginPress,
   onRegisterPress,
   loginText = "Iniciar Sesión",
@@ -53,7 +52,7 @@ const ScreenLogin = ({
       signInWithCredential(auth, credential)
         .then((userCredential) => {
           console.log('Inicio de sesión con Google exitoso', userCredential.user);
-          router.push('./screenProfile'); // Navegar a la pantalla de perfil
+          router.push('../screens/screenMain'); // Navegar a la pantalla de perfil
         })
         .catch((error) => {
           console.error('Error en la autenticación con Google:', error);
@@ -69,7 +68,7 @@ const ScreenLogin = ({
       .then((userCredential) => {
         console.log('Inicio Correcto!');
         const user = userCredential.user;
-        router.push('./screenProfile'); // Navegar a la pantalla de perfil
+        router.push('../screens/screenMain'); // Navegar a la pantalla de perfil
         console.log(user);
       })
       .catch((error) => {

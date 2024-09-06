@@ -65,7 +65,7 @@ const ScreenMain = () => {
         <View style={styles.menuItems}>
           <TouchableOpacity style={styles.menuItem}>
             <AntDesign name="profile" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>My Profile</Text>
+            <Text style={styles.menuItemText}>Mi Perfil</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
@@ -75,12 +75,12 @@ const ScreenMain = () => {
 
           <TouchableOpacity style={styles.menuItem}>
             <AntDesign name="creditcard" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Payment Methods</Text>
+            <Text style={styles.menuItemText}>Metodos de Pago</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <AntDesign name="customerservice" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Contact Us</Text>
+            <Text style={styles.menuItemText}>Contactanos</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
@@ -90,13 +90,13 @@ const ScreenMain = () => {
 
           <TouchableOpacity style={styles.menuItem}>
             <AntDesign name="questioncircleo" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Help & FAQs</Text>
+            <Text style={styles.menuItemText}>Ayuda & FAQs</Text>
           </TouchableOpacity>
 
           {/* Botón de Log Out */}
           <TouchableOpacity style={[styles.menuItem, styles.logoutButton]} onPress={handleLogout}>
             <AntDesign name="logout" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Log Out</Text>
+            <Text style={styles.menuItemText}>Cerrar Sesión</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
