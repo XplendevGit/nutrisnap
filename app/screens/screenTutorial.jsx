@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, PermissionsAndroid, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, PermissionsAndroid, Alert, StyleSheet } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient'; // Usamos el LinearGradient de expo
 
 const tutorialData = [
   {
-    image: require('../../assets/images/react-logo.png'), // Imagen de bienvenida
+    image: require('../../assets/images/Logo1_all_white.png'), // Imagen de bienvenida
     text: "Bienvenido a NutriSnap! Aquí podrás comparar productos de forma fácil.",
   },
   {
@@ -77,17 +78,96 @@ const ScreenTutorial = () => {
     <GestureRecognizer
       onSwipeLeft={handleSwipeLeft}
       onSwipeRight={handleSwipeRight}
-      style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      style={{ flex: 1 }}
     >
-      <Image source={tutorialData[index].image} style={{ width: 200, height: 200 }} />
-      <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 20 }}>{tutorialData[index].text}</Text>
-      {tutorialData[index].buttonText && (
-        <TouchableOpacity onPress={handleAction} style={{ backgroundColor: '#388E3C', padding: 10, borderRadius: 5 }}>
-          <Text style={{ color: '#fff' }}>{tutorialData[index].buttonText}</Text>
-        </TouchableOpacity>
-      )}
+      <LinearGradient
+        colors={['#388E3C', '#66BB6A']} // Gradiente verde
+        style={styles.container}
+      >
+        <Image source={tutorialData[index].image} style={styles.image} />
+        <Text style={styles.text}>{tutorialData[index].text}</Text>
+
+        {/* Botón de acción */}
+        {tutorialData[index].buttonText && (
+          <TouchableOpacity onPress={handleAction} style={styles.button}>
+            <Text style={styles.buttonText}>{tutorialData[index].buttonText}</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Barra de progreso */}
+        <View style={styles.progressContainer}>
+          {tutorialData.map((_, i) => (
+            <View
+              key={i}
+              style={[
+                styles.progressDot,
+                i <= index ? styles.activeDot : styles.inactiveDot,
+              ]}
+            />
+          ))}
+        </View>
+
+        {/* Texto que indica que puede deslizar */}
+        <Text style={styles.swipeText}>Desliza para continuar</Text>
+      </LinearGradient>
     </GestureRecognizer>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginBottom: 30,
+  },
+  text: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#fff',
+    marginHorizontal: 20,
+    marginBottom: 40,
+  },
+  button: {
+    backgroundColor: '#81C784',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 40,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: '#fff',
+  },
+  inactiveDot: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  swipeText: {
+    position: 'absolute',
+    bottom: 60,
+    color: '#fff',
+    fontSize: 14,
+  },
+});
 
 export default ScreenTutorial;
