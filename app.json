@@ -46,6 +46,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "94a4ff7a-edb1-4b1f-a389-dc4c452c8d9f"
+      }
+    },
+    "owner": "xplendev"
   }
 }
