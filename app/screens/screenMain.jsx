@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Animated, Dimensions, Pressable } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; // Iconos de hamburguesa y demás
 import { auth } from '../../firebase-config'; // Importa Firebase auth
-import { signOut } from 'firebase/auth'; // Importa la función signOut de Firebase
+import { signOut, onAuthStateChanged } from 'firebase/auth'; // Importa la función signOut y onAuthStateChanged de Firebase
 import { useRouter } from 'expo-router'; // Para la navegación
 
 const ScreenMain = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(null); // Estado para almacenar el usuario logueado
   const slideAnim = useState(new Animated.Value(-Dimensions.get('window').width))[0]; // Animación de deslizar
   const router = useRouter(); // Para la navegación
+
+  useEffect(() => {
+    // Verifica si el usuario está logueado
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Limpia la suscripción cuando se desmonta el componente
+    return unsubscribe;
+  }, []);
 
   const toggleMenu = () => {
     if (menuOpen) {
@@ -56,49 +67,67 @@ const ScreenMain = () => {
       )}
 
       <Animated.View style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}>
-        <View style={styles.header}>
-          <Image source={{ uri: 'https://randomuser.me/api/portraits/men/41.jpg' }} style={styles.avatar} />
-          <Text style={styles.name}>Steven Smiths</Text>
-          <Text style={styles.email}>stevemaxim@gmail.com</Text>
-        </View>
+        {/* Si el usuario está logueado, mostrar el menú completo */}
+        {user ? (
+          <View>
+            <View style={styles.header}>
+              <Image source={{ uri: 'https://randomuser.me/api/portraits/men/41.jpg' }} style={styles.avatar} />
+              <Text style={styles.name}>{user.displayName || "Usuario"}</Text>
+              <Text style={styles.email}>{user.email}</Text>
+            </View>
 
-        <View style={styles.menuItems}>
-          <TouchableOpacity style={styles.menuItem}>
-            <AntDesign name="profile" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Mi Perfil</Text>
-          </TouchableOpacity>
+            <View style={styles.menuItems}>
+              <TouchableOpacity style={styles.menuItem}>
+                <AntDesign name="profile" size={24} color="#fff" />
+                <Text style={styles.menuItemText}>Mi Perfil</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <AntDesign name="enviromento" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Delivery Address</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem}>
+                <AntDesign name="enviromento" size={24} color="#fff" />
+                <Text style={styles.menuItemText}>Delivery Address</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <AntDesign name="creditcard" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Metodos de Pago</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem}>
+                <AntDesign name="creditcard" size={24} color="#fff" />
+                <Text style={styles.menuItemText}>Metodos de Pago</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <AntDesign name="customerservice" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Contactanos</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem}>
+                <AntDesign name="customerservice" size={24} color="#fff" />
+                <Text style={styles.menuItemText}>Contactanos</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <AntDesign name="setting" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Settings</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem}>
+                <AntDesign name="setting" size={24} color="#fff" />
+                <Text style={styles.menuItemText}>Settings</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <AntDesign name="questioncircleo" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Ayuda & FAQs</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem}>
+                <AntDesign name="questioncircleo" size={24} color="#fff" />
+                <Text style={styles.menuItemText}>Ayuda & FAQs</Text>
+              </TouchableOpacity>
 
-          {/* Botón de Log Out */}
-          <TouchableOpacity style={[styles.menuItem, styles.logoutButton]} onPress={handleLogout}>
-            <AntDesign name="logout" size={24} color="#fff" />
-            <Text style={styles.menuItemText}>Cerrar Sesión</Text>
-          </TouchableOpacity>
-        </View>
+              {/* Botón de Log Out */}
+              <TouchableOpacity style={[styles.menuItem, styles.logoutButton]} onPress={handleLogout}>
+                <AntDesign name="logout" size={24} color="#fff" />
+                <Text style={styles.menuItemText}>Cerrar Sesión</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          // Si el usuario no está logueado, mostrar mensaje y botón de login
+          <View style={styles.notLoggedInContainer}>
+            <Text style={styles.notLoggedInTitle}>Bienvenido a NutriSnap</Text>
+            <Text style={styles.notLoggedInSubtitle}>Por favor inicia sesión para acceder a todas las funcionalidades</Text>
+
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => router.replace('./screenLogin')} // Redirigir a la pantalla de login
+            >
+              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </Animated.View>
     </View>
   );
@@ -175,6 +204,33 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     marginTop: 40,
+  },
+  notLoggedInContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  notLoggedInTitle: {
+    fontSize: 22,
+    color: '#fff',
+    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  notLoggedInSubtitle: {
+    fontSize: 16,
+    color: '#fff',
+    marginBottom: 30,
+    textAlign: 'center',
+  },
+  loginButton: {
+    backgroundColor: '#81C784',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
