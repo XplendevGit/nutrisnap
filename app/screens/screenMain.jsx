@@ -66,69 +66,66 @@ const ScreenMain = () => {
         <Pressable style={styles.overlay} onPress={toggleMenu} />
       )}
 
-      <Animated.View style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}>
-        {/* Si el usuario está logueado, mostrar el menú completo */}
-        {user ? (
-          <View>
-            <View style={styles.header}>
-              <Image source={{ uri: 'https://randomuser.me/api/portraits/men/41.jpg' }} style={styles.avatar} />
-              <Text style={styles.name}>{user.displayName || "Usuario"}</Text>
-              <Text style={styles.email}>{user.email}</Text>
-            </View>
+<Animated.View style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}>
+  <View style={styles.header}>
+    {/* Verificación para mostrar la imagen y detalles del usuario */}
+    {user && (
+      <>
+        <Image
+          source={{
+            uri: user.photoURL || 'https://via.placeholder.com/80', // Imagen predeterminada
+          }}
+          style={styles.avatar}
+        />
+        <Text style={styles.name}>{user.displayName || 'Usuario'}</Text>
+        <Text style={styles.email}>{user.email || 'Sin correo electrónico'}</Text>
+      </>
+    )}
+  </View>
 
-            <View style={styles.menuItems}>
-              <TouchableOpacity style={styles.menuItem}>
-                <AntDesign name="profile" size={24} color="#fff" />
-                <Text style={styles.menuItemText}>Mi Perfil</Text>
-              </TouchableOpacity>
+  {/* Contenedor de los ítems del menú */}
+  <View style={styles.menuItems}>
+    <TouchableOpacity 
+    style={styles.menuItem}
+    onPress={() => router.push('./screenProfile')}
+    >
+      <AntDesign name="profile" size={24} color="#fff" />
+      <Text style={styles.menuItemText}>Mi Perfil</Text>
+    </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem}>
-                <AntDesign name="enviromento" size={24} color="#fff" />
-                <Text style={styles.menuItemText}>Delivery Address</Text>
-              </TouchableOpacity>
+    <TouchableOpacity style={styles.menuItem}>
+      <AntDesign name="enviromento" size={24} color="#fff" />
+      <Text style={styles.menuItemText}>Delivery Address</Text>
+    </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem}>
-                <AntDesign name="creditcard" size={24} color="#fff" />
-                <Text style={styles.menuItemText}>Metodos de Pago</Text>
-              </TouchableOpacity>
+    <TouchableOpacity style={styles.menuItem}>
+      <AntDesign name="creditcard" size={24} color="#fff" />
+      <Text style={styles.menuItemText}>Métodos de Pago</Text>
+    </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem}>
-                <AntDesign name="customerservice" size={24} color="#fff" />
-                <Text style={styles.menuItemText}>Contactanos</Text>
-              </TouchableOpacity>
+    <TouchableOpacity style={styles.menuItem}>
+      <AntDesign name="customerservice" size={24} color="#fff" />
+      <Text style={styles.menuItemText}>Contáctanos</Text>
+    </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem}>
-                <AntDesign name="setting" size={24} color="#fff" />
-                <Text style={styles.menuItemText}>Settings</Text>
-              </TouchableOpacity>
+    <TouchableOpacity style={styles.menuItem}>
+      <AntDesign name="setting" size={24} color="#fff" />
+      <Text style={styles.menuItemText}>Configuración</Text>
+    </TouchableOpacity>
 
-              <TouchableOpacity style={styles.menuItem}>
-                <AntDesign name="questioncircleo" size={24} color="#fff" />
-                <Text style={styles.menuItemText}>Ayuda & FAQs</Text>
-              </TouchableOpacity>
+    <TouchableOpacity style={styles.menuItem}>
+      <AntDesign name="questioncircleo" size={24} color="#fff" />
+      <Text style={styles.menuItemText}>Ayuda & FAQs</Text>
+    </TouchableOpacity>
 
-              {/* Botón de Log Out */}
-              <TouchableOpacity style={[styles.menuItem, styles.logoutButton]} onPress={handleLogout}>
-                <AntDesign name="logout" size={24} color="#fff" />
-                <Text style={styles.menuItemText}>Cerrar Sesión</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          // Si el usuario no está logueado, mostrar mensaje y botón de login
-          <View style={styles.notLoggedInContainer}>
-            <Text style={styles.notLoggedInTitle}>Bienvenido a NutriSnap</Text>
-            <Text style={styles.notLoggedInSubtitle}>Por favor inicia sesión para acceder a todas las funcionalidades</Text>
+    {/* Botón de Log Out */}
+    <TouchableOpacity style={[styles.menuItem, styles.logoutButton]} onPress={handleLogout}>
+      <AntDesign name="logout" size={24} color="#fff" />
+      <Text style={styles.menuItemText}>Cerrar Sesión</Text>
+    </TouchableOpacity>
+  </View>
+</Animated.View>
 
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={() => router.replace('./screenLogin')} // Redirigir a la pantalla de login
-            >
-              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </Animated.View>
     </View>
   );
 };
