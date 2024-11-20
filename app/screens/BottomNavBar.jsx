@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons'; // Iconos más actuales
 import { MotiView } from 'moti';
 
 const BottomNavBar = ({ navigation }) => {
@@ -9,37 +9,40 @@ const BottomNavBar = ({ navigation }) => {
       from={{ translateY: 100, opacity: 0 }}
       animate={{ translateY: 0, opacity: 1 }}
       transition={{ type: 'timing', duration: 500 }}
-      className="absolute bottom-0 w-full bg-white shadow-md rounded-t-xl flex-row justify-between px-6 py-4"
+      className="absolute bottom-0 w-full bg-white shadow-md rounded-t-xl flex-row justify-between px-6 items-center py-4"
     >
       {/* Home Button */}
       <TouchableOpacity onPress={() => navigation.navigate('Home')} className="flex items-center">
-        <AntDesign name="home" size={24} color="#388E3C" />
-        <Text className="text-xs text-gray-500">Home</Text>
+        <Ionicons name="home-outline" size={28} color="#388E3C" />
+        <Text className="text-xs text-gray-500">Inicio</Text>
       </TouchableOpacity>
 
-      {/* My Task Button */}
+      {/* News Button */}
       <TouchableOpacity onPress={() => navigation.navigate('Tasks')} className="flex items-center">
-        <MaterialIcons name="assignment" size={24} color="#388E3C" />
-        <Text className="text-xs text-gray-500">My Task</Text>
+        <MaterialCommunityIcons name="newspaper-variant-outline" size={28} color="#388E3C" />
+        <Text className="text-xs text-gray-500">Noticias</Text>
       </TouchableOpacity>
 
       {/* Center Floating Button */}
-      <View className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-blue-500 rounded-full w-16 h-16 flex justify-center items-center shadow-lg">
-        <TouchableOpacity onPress={() => navigation.navigate('AddTask')}>
-          <AntDesign name="plus" size={28} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('AddTask')}
+        className="relative flex items-center"
+      >
+        <View className="rounded-md border-2 bg-[#388E3C] border-[#388E3C] flex flex-row items-center justify-center px-1.5 py-1.5 shadow-lg">
+          <Feather name="plus" size={20} color="#fff" />
+        </View>
+      </TouchableOpacity>
 
-      {/* Payment Button */}
+      {/* Records Button */}
       <TouchableOpacity onPress={() => navigation.navigate('Payment')} className="flex items-center">
-        <MaterialIcons name="payments" size={24} color="#388E3C" />
-        <Text className="text-xs text-gray-500">Payment</Text>
+        <Ionicons name="document-text-outline" size={28} color="#388E3C" />
+        <Text className="text-xs text-gray-500">Registros</Text>
       </TouchableOpacity>
 
       {/* Profile Button */}
-      <TouchableOpacity onPress={() => navigation.navigate('Profile')} className="flex items-center">
-        <AntDesign name="user" size={24} color="#388E3C" />
-        <Text className="text-xs text-gray-500">Profile</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('ScreenProfile')} className="flex items-center">
+        <Ionicons name="person-outline" size={28} color="#388E3C" />
+        <Text className="text-xs text-gray-500">Perfil</Text>
       </TouchableOpacity>
     </MotiView>
   );

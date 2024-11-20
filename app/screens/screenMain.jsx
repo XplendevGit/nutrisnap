@@ -4,7 +4,7 @@ import BottomNavBar from './BottomNavBar'; // Asegúrate de importar el componen
 
 const ScreenMain = () => {
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-gray-50 pt-12">
       <Text className="text-center text-lg font-bold text-green-700 mt-4">Bienvenido a NutriSnap</Text>
       {/* Contenido Principal */}
       <View className="flex-1"></View>
