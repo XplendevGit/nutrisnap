@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { MotiView } from 'moti';
+import LottieView from 'lottie-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import BottomNavBar from './BottomNavBar';
 
@@ -68,6 +69,10 @@ const ScreenMain = ({ navigation }) => {
     ]);
   };
 
+  const handleActionButtonPress = () => {
+    Alert.alert('Action', 'Performing additional action!');
+  };
+
   return (
     <View className="flex-1 bg-[#F5F7FA] relative">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="flex-1">
@@ -96,11 +101,10 @@ const ScreenMain = ({ navigation }) => {
           {/* Contenedores de productos */}
           <View className="mt-8">
             <View className="flex flex-wrap flex-row justify-between">
-              {[
-                { label: 'Transactions', color: '#4CAF50', items: '7 Items' },
-                { label: 'Budget', color: '#FF5722', items: '4 Items' },
-                { label: 'Recommendations', color: '#FFC107', items: '6 Items' },
-                { label: 'Credit Cards', color: '#3F51B5', items: '3 Items' },
+              {[{ label: 'Sube un Snap', color: '#4CAF50', items: '0 Productos' },
+                { label: 'Sube un Snap', color: '#FF5722', items: '0 Productos' },
+                { label: 'Sube un Snap', color: '#FFC107', items: '0 Productos' },
+                { label: 'Sube un Snap', color: '#3F51B5', items: '0 Productos' },
               ].map((container, index) => (
                 <TouchableOpacity
                   key={index}
@@ -115,7 +119,7 @@ const ScreenMain = ({ navigation }) => {
                       style={{ resizeMode: 'cover' }}
                     />
                   ) : (
-                    <>
+                    <View className="flex-1 justify-between">
                       <Text className="text-white font-bold text-lg">{container.label}</Text>
                       <Text className="text-white mt-2">{container.items}</Text>
                       <Ionicons
@@ -124,31 +128,26 @@ const ScreenMain = ({ navigation }) => {
                         color="white"
                         className="absolute bottom-4 right-4"
                       />
-                    </>
+                    </View>
                   )}
                 </TouchableOpacity>
               ))}
             </View>
           </View>
 
-          {/* Botones de categorías */}
-          <View className="mt-8">
-            <Text className="text-lg font-bold text-gray-800">Choose a category</Text>
-            <View className="flex-row justify-around mt-4">
-              {[
-                { label: 'Branch Services', icon: 'storefront' },
-                { label: 'Make a Payment', icon: 'payment' },
-              ].map((button, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => handleAdvancedSearch(button.label)}
-                  className="flex-row items-center bg-white rounded-lg shadow-md p-4"
-                >
-                  <MaterialIcons name={button.icon} size={24} color="#388E3C" />
-                  <Text className="ml-2 text-gray-800">{button.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+          {/* Botón animado */}
+          <View className="mt-4 items-center">
+            <TouchableOpacity onPress={handleActionButtonPress} className="w-20 h-20">
+              <LottieView
+                source={require('../../assets/images/dados_animation_lottie.json')} // Ubicación del archivo local Lottie
+                autoPlay
+                loop
+                style={{
+                  width: 80,
+                  height: 80,
+                }}
+              />
+            </TouchableOpacity>
           </View>
         </MotiView>
       </ScrollView>
