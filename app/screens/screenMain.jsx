@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import BottomNavBar from './BottomNavBar'; // Asegúrate de importar el componente
+import BottomNavBar from './BottomNavBar'; 
 
 const ScreenMain = () => {
   return (
