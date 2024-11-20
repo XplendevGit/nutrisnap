@@ -9,26 +9,24 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { MotiView } from 'moti';
-import * as ImagePicker from 'expo-image-picker'; // Importa Image Picker
-import { Picker } from '@react-native-picker/picker'; // Combobox de selección
+import { MotiView, AnimatePresence } from 'moti';
+import * as ImagePicker from 'expo-image-picker';
 
-const ScreenEditUser = () => {
-  // Estados iniciales para manejar datos del usuario
+const ScreenEditUser = ({ navigation }) => {
   const [userData, setUserData] = useState({
-    profilePicture: 'https://via.placeholder.com/100', // URL de foto de perfil
-    email: 'user@example.com', // Este será fijo
-    username: 'stiven_castillo', // Modificable cada 3 meses
+    profilePicture: 'https://via.placeholder.com/100',
+    email: 'user@example.com',
+    username: 'stiven_castillo',
     description: '',
     goal: '',
     diseases: '',
     weight: '',
     height: '',
-    diet: 'None', // Vegetariano, Carnívoro, etc.
-    activities: ['bicycle', 'run', 'weightlifting'], // Lista de actividades físicas
+    diet: 'None',
+    activities: ['bicycle', 'run', 'weightlifting'],
   });
 
-  const [showDietPicker, setShowDietPicker] = useState(false); // Controla la visibilidad del Combobox
+  const [showDietPicker, setShowDietPicker] = useState(false);
 
   const handleInputChange = (field, value) => {
     setUserData({ ...userData, [field]: value });
@@ -56,18 +54,21 @@ const ScreenEditUser = () => {
   };
 
   return (
-    <View className="flex-1 bg-[#E8F5E9] relative">
-      {/* Contenido desplazable */}
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
-        className="flex-1"
+    <View className="flex-1 bg-[#F5F7FA] relative">
+      {/* Botón de regresar */}
+      <TouchableOpacity
+        onPress={() => navigation && navigation.goBack()}
+        className="absolute top-10 left-4 bg-white p-2 rounded-full shadow-md"
       >
-        {/* Animación de entrada */}
+        <Ionicons name="arrow-back" size={24} color="#388E3C" />
+      </TouchableOpacity>
+
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="flex-1">
         <MotiView
           from={{ translateY: 50, opacity: 0 }}
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'spring', duration: 800, damping: 15 }}
-          className="px-4 pt-8"
+          className="px-4 pt-16"
         >
           {/* Foto de perfil */}
           <View className="items-center">
@@ -90,47 +91,36 @@ const ScreenEditUser = () => {
 
           {/* Campos de edición */}
           <View className="mt-6 space-y-4">
-            {/* Username */}
             <TextInput
               value={userData.username}
               onChangeText={(value) => handleInputChange('username', value)}
               placeholder="Username"
               className="border border-gray-300 rounded-lg p-4 text-gray-600"
             />
-
-            {/* Description */}
             <TextInput
               value={userData.description}
               onChangeText={(value) => handleInputChange('description', value)}
               placeholder="Description"
               className="border border-gray-300 rounded-lg p-4 text-gray-600"
             />
-
-            {/* Goal */}
             <TextInput
               value={userData.goal}
               onChangeText={(value) => handleInputChange('goal', value)}
               placeholder="Goal"
               className="border border-gray-300 rounded-lg p-4 text-gray-600"
             />
-
-            {/* Diseases */}
             <TextInput
               value={userData.diseases}
               onChangeText={(value) => handleInputChange('diseases', value)}
               placeholder="Diseases"
               className="border border-gray-300 rounded-lg p-4 text-gray-600"
             />
-
-            {/* Weight */}
             <TextInput
               value={userData.weight}
               onChangeText={(value) => handleInputChange('weight', value)}
               placeholder="Weight (kg)"
               className="border border-gray-300 rounded-lg p-4 text-gray-600"
             />
-
-            {/* Height */}
             <TextInput
               value={userData.height}
               onChangeText={(value) => handleInputChange('height', value)}
@@ -141,41 +131,57 @@ const ScreenEditUser = () => {
             {/* Diet Combobox */}
             <TouchableOpacity
               onPress={() => setShowDietPicker(!showDietPicker)}
-              className="border border-gray-300 rounded-lg p-4 text-gray-600 bg-white shadow-md"
+              className="border border-gray-300 rounded-lg p-4 text-gray-600 bg-white shadow-md flex-row justify-between items-center"
             >
               <Text className="text-gray-600">
                 Diet: {userData.diet === 'None' ? 'Select Diet' : userData.diet}
               </Text>
+              <Ionicons name="chevron-down" size={20} color="#388E3C" />
             </TouchableOpacity>
 
-            {showDietPicker && (
-              <MotiView
-                from={{ scaleY: 0, opacity: 0 }}
-                animate={{ scaleY: 1, opacity: 1 }}
-                transition={{ type: 'spring', duration: 500 }}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <Picker
-                  selectedValue={userData.diet}
-                  onValueChange={(value) => {
-                    handleInputChange('diet', value);
-                    setShowDietPicker(false);
-                  }}
+            <AnimatePresence>
+              {showDietPicker && (
+                <MotiView
+                  from={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ type: 'spring', duration: 400 }}
+                  className="bg-white rounded-lg shadow-md overflow-hidden"
                 >
-                  <Picker.Item label="Vegetarian" value="Vegetarian" />
-                  <Picker.Item label="Carnivore" value="Carnivore" />
-                  <Picker.Item label="None" value="None" />
-                </Picker>
-              </MotiView>
-            )}
+                  {['Vegetarian', 'Carnivore', 'None'].map((diet) => (
+                    <TouchableOpacity
+                      key={diet}
+                      onPress={() => {
+                        handleInputChange('diet', diet);
+                        setShowDietPicker(false);
+                      }}
+                      className="p-4 border-b border-gray-300"
+                    >
+                      <Text className="text-gray-600">{diet}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </MotiView>
+              )}
+            </AnimatePresence>
           </View>
 
           {/* Actividades */}
-          <View className="mt-6">
+          <MotiView
+            from={{ translateY: showDietPicker ? 10 : 0 }}
+            animate={{ translateY: showDietPicker ? 50 : 0 }}
+            transition={{ type: 'spring', duration: 400 }}
+            className="mt-6"
+          >
             <Text className="text-lg font-bold text-gray-800 mb-4">Your Activities</Text>
             <View className="flex-row justify-between px-4">
               {userData.activities.map((activity, index) => (
-                <View key={index} className="items-center">
+                <MotiView
+                  key={index}
+                  from={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="items-center"
+                >
                   {activityIcons[activity] || (
                     <MaterialCommunityIcons
                       name="help-circle-outline"
@@ -184,19 +190,20 @@ const ScreenEditUser = () => {
                     />
                   )}
                   <Text className="text-sm text-gray-600 mt-2 capitalize">{activity}</Text>
-                </View>
+                </MotiView>
               ))}
             </View>
-          </View>
+          </MotiView>
         </MotiView>
       </ScrollView>
 
       {/* Botón flotante para guardar */}
       <TouchableOpacity
         onPress={() => Alert.alert('Changes Saved!')}
-        className="absolute bottom-6 right-6 bg-[#388E3C] p-4 rounded-full shadow-lg"
+        className="absolute bottom-0 right-0 bg-[#388E3C] w-16 h-16 rounded-full shadow-lg flex items-center justify-center"
+        style={{ marginBottom: -8, marginRight: -8 }}
       >
-        <Ionicons name="save" size={24} color="white" />
+        <Ionicons name="save" size={28} color="white" />
       </TouchableOpacity>
     </View>
   );

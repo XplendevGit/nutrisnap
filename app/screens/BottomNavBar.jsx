@@ -35,7 +35,7 @@ const BottomNavBar = ({ navigation }) => {
       {/* Home Button */}
       <TouchableOpacity onPress={() => navigation.navigate('Home')} className="flex items-center">
         <Ionicons name="home-outline" size={28} color="#388E3C" />
-        <Text className="text-xs text-gray-500">Inicio</Text>
+        <Text className="text-xs text-gray-500">DailySnaps</Text>
       </TouchableOpacity>
 
       {/* News Button */}
@@ -67,7 +67,7 @@ const BottomNavBar = ({ navigation }) => {
          onPress={handleProfilePress} 
          className="flex items-center">
         <Ionicons name="person-outline" size={28} color="#388E3C" />
-        <Text className="text-xs text-gray-500">Perfil</Text>
+        <Text className="text-xs text-gray-500">Mi Perfil</Text>
       </TouchableOpacity>
     </MotiView>
   );
