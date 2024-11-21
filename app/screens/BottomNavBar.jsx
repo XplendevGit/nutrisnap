@@ -1,29 +1,28 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons'; // Iconos más actuales
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import LottieView from 'lottie-react-native';
 import { MotiView } from 'moti';
 import { useRouter } from 'expo-router';
 
-const BottomNavBar = ({ navigation }) => {
-
-  const router = useRouter(); // Hook para manejar navegación
+const BottomNavBar = () => {
+  const router = useRouter();
 
   const handleProfilePress = () => {
-    // Navega directamente a ScreenProfile
-    router.push('../screens/screenProfile');
+    router.push('../screens/screenProfile'); // Navega a ScreenProfile
   };
 
-  const handleInicioPress = () => {
-    // Navega directamente a ScreenInicio
-    router.push('../screens/screenInicio');
-  };
   const handleMainPress = () => {
-    // Navega directamente a ScreenInicio
-    router.push('../screens/screenMain');
+    router.push('../screens/screenMain'); // Navega a ScreenMain
   };
 
+  const handleNewsPress = () => {
+    router.push('../screens/screenNews'); // Navega a ScreenNews
+  };
 
-
+  const handlePaymentPress = () => {
+    router.push('../screens/screenPayment'); // Navega a ScreenPayment
+  };
 
   return (
     <MotiView
@@ -32,40 +31,63 @@ const BottomNavBar = ({ navigation }) => {
       transition={{ type: 'timing', duration: 500 }}
       className="absolute bottom-0 w-full bg-white shadow-md rounded-t-xl flex-row justify-between px-6 py-4"
     >
-      {/* Home Button */}
-      <TouchableOpacity onPress={() => navigation.navigate('Home')} className="flex items-center">
-        <Ionicons name="home-outline" size={28} color="#388E3C" />
-        <Text className="text-xs text-gray-500">DailySnaps</Text>
+      {/* Botón Animado (Lottie) */}
+      <TouchableOpacity
+        onPress={handleMainPress}
+        className="flex items-center"
+        style={{ width: 50, height: 50 }}
+      >
+        <View
+          style={{
+            width: 30,
+            height: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <LottieView
+            source={require('../../assets/images/icon3.json')} // Ruta del archivo Lottie
+            autoPlay
+            loop
+            style={{
+              width: 40,
+              height: 40,
+            }}
+          />
+        </View>
+        <Text className="text-xs text-gray-500">Noticias</Text>
       </TouchableOpacity>
 
-      {/* News Button */}
-      <TouchableOpacity 
-         onPress={handleMainPress}
-         className="flex items-center">
+      {/* Botón Noticias */}
+      <TouchableOpacity onPress={handleNewsPress} className="flex items-center">
         <MaterialCommunityIcons name="newspaper-variant-outline" size={28} color="#388E3C" />
         <Text className="text-xs text-gray-500">Noticias</Text>
       </TouchableOpacity>
 
-      {/* Center Floating Button */}
+      {/* Botón Central (Logo1) */}
       <TouchableOpacity
         onPress={handleMainPress}
         className="relative flex items-center"
       >
-        <View className="rounded-md border-2 bg-[#388E3C] border-[#388E3C] flex flex-row items-center justify-center px-1.5 py-1.5 shadow-lg">
-          <Feather name="plus" size={20} color="#fff" />
+        <View
+          className="rounded-full bg-[#388E3C] flex flex-row items-center justify-center shadow-lg"
+          style={{ width: 60, height: 60 }}
+        >
+          <Image
+            source={require('../../assets/images/Logo1_all_white.png')} // Ruta de la imagen central
+            style={{ width: 35, height: 35, resizeMode: 'contain' }}
+          />
         </View>
       </TouchableOpacity>
 
-      {/* Records Button */}
-      <TouchableOpacity onPress={() => navigation.navigate('Payment')} className="flex items-center">
+      {/* Botón Registros */}
+      <TouchableOpacity onPress={handlePaymentPress} className="flex items-center">
         <Ionicons name="document-text-outline" size={28} color="#388E3C" />
         <Text className="text-xs text-gray-500">Registros</Text>
       </TouchableOpacity>
 
-      {/* Botón de Perfil */}
-      <TouchableOpacity 
-         onPress={handleProfilePress} 
-         className="flex items-center">
+      {/* Botón Mi Perfil */}
+      <TouchableOpacity onPress={handleProfilePress} className="flex items-center">
         <Ionicons name="person-outline" size={28} color="#388E3C" />
         <Text className="text-xs text-gray-500">Mi Perfil</Text>
       </TouchableOpacity>

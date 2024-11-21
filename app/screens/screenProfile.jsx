@@ -1,62 +1,146 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { Feather, AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons'; // Iconos actualizados
 import { useRouter } from 'expo-router'; // Manejo de navegación
 import { MotiView } from 'moti';
-import BottomNavBar from './BottomNavBar';
+import BottomNavBar from './BottomNavBar'; // Componente NavBar
+import { auth, signOut } from '../../firebase-config'; // Firebase auth para cerrar sesión
 
 const ScreenProfile = () => {
   const router = useRouter();
+  const userEmail = auth.currentUser?.email || 'email@example.com'; // Recupera el correo de Firebase
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        router.replace('/login'); // Redirige al inicio de sesión
+      })
+      .catch((error) => {
+        console.error('Error al cerrar sesión:', error);
+      });
+  };
 
   return (
-    <View className="flex-1 bg-gray-50 relative">
-      {/* Botón de editar en la esquina superior derecha */}
-      <TouchableOpacity
-        onPress={() => router.push('../screens/screenEditUser')}
-        className="absolute top-10 right-4 bg-blue-500 p-3 rounded-full shadow-md z-10"
-      >
-        <MaterialIcons name="edit" size={24} color="white" />
-      </TouchableOpacity>
-
+    <View className="flex-1 bg-gray-50 ">
       {/* Contenido desplazable */}
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 80 }} // Espacio para que el contenido no se superponga al NavBar
+        contentContainerStyle={{ paddingBottom: 100 }}
         className="flex-1"
       >
-        {/* Animación del contenedor principal */}
+        {/* Encabezado con fondo degradado */}
+        <View className="bg-gradient-to-r from-blue-400 to-purple-500 h-48 w-full rounded-b-xl items-center justify-end relative">
+          {/* Botón de regresar */}
+          <TouchableOpacity
+            onPress={() => router.push('../screens/screenMain')}
+            className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
+          >
+            <MaterialIcons name="arrow-back" size={24} color="#388E3C" />
+          </TouchableOpacity>
+
+          {/* Botón de editar */}
+          <TouchableOpacity
+            onPress={() => router.push('../screens/screenEditUser')}
+            className="absolute top-10 right-4 bg-[#388E3C] p-3 rounded-full shadow-md"
+          >
+            <MaterialIcons name="edit" size={24} color="white" />
+          </TouchableOpacity>
+
+          {/* Imagen de perfil */}
+          <View className="mb-[-30px] items-center">
+            <Image
+              source={{ uri: 'https://via.placeholder.com/100' }} // Cambiar por foto del usuario
+              className="w-24 h-24 rounded-full border-4 border-white shadow-md"
+            />
+            {/* Contenedor de + debajo de la imagen */}
+            <TouchableOpacity
+              className="absolute bottom-0 right-0 bg-[#388E3C] w-6 h-6 rounded-full flex items-center justify-center"
+              onPress={() => router.push('../screens/screenEditUser')}
+            >
+              <MaterialIcons name="add" size={16} color="white" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <MotiView
           from={{ translateY: 50, opacity: 0 }}
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'timing', duration: 500 }}
-          className="px-4 pt-8"
+          className="px-4 mt-6 pt-2"
         >
-          {/* Header con foto de perfil */}
-          <View className="items-center">
-            <Image
-              source={{
-                uri: 'https://via.placeholder.com/100', // Cambiar por foto de usuario
-              }}
-              className="w-24 h-24 rounded-full border-4 border-white shadow-md"
-            />
-            <Text className="text-xl font-bold text-gray-800 mt-4">Ophelia Coleman</Text>
-            <Text className="text-sm text-gray-500">Los Angeles, CA</Text>
+          {/* Nombre de usuario y correo */}
+          <Text className="text-center text-xl font-bold text-gray-800">Monica Miller</Text>
+          <Text className="text-center text-sm text-gray-500">@{userEmail}</Text>
+
+          {/* Contenedores de Followers y Following */}
+          <View className="flex-row justify-center space-x-4 mt-6">
+            <View className="bg-white rounded-lg shadow-md px-6 py-4 items-center">
+              <Text className="text-xl font-bold text-gray-800">888k</Text>
+              <Text className="text-sm text-gray-500">Followers</Text>
+            </View>
+            <View className="bg-white rounded-lg shadow-md px-6 py-4 items-center">
+              <Text className="text-xl font-bold text-gray-800">204k</Text>
+              <Text className="text-sm text-gray-500">Following</Text>
+            </View>
           </View>
 
-          {/* Descripción */}
-          <Text className="text-center text-sm text-gray-600 mt-4 px-4">
-            I’m a positive person. I love to travel and eat. Always available for chat.
-          </Text>
+          {/* Sección About */}
+          <View className="mt-8">
+            <Text className="text-lg font-bold text-gray-800">About</Text>
+            <Text className="text-sm text-gray-600 mt-2">
+              What is Lorem Ipsum Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry Lorem Ipsum has been the when an unknown printer took a galley...
+            </Text>
+          </View>
 
-          {/* Botones de acciones */}
-          <View className="flex-row justify-center space-x-6 mt-6">
-            <TouchableOpacity className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full shadow-md">
-              <Feather name="message-circle" size={24} color="#388E3C" />
+          {/* Sección Interests */}
+          <View className="mt-8">
+            <Text className="text-lg font-bold text-gray-800">Interests</Text>
+            <View className="flex-row flex-wrap mt-4">
+              <View className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2 flex-row items-center">
+                <Feather name="coffee" size={16} color="#388E3C" />
+                <Text className="ml-2 text-sm text-gray-600">Foodie</Text>
+              </View>
+              <View className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2 flex-row items-center">
+                <MaterialIcons name="self-improvement" size={16} color="#388E3C" />
+                <Text className="ml-2 text-sm text-gray-600">Yoga</Text>
+              </View>
+              <View className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2 flex-row items-center">
+                <MaterialIcons name="brush" size={16} color="#388E3C" />
+                <Text className="ml-2 text-sm text-gray-600">Painting</Text>
+              </View>
+              <View className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2 flex-row items-center">
+                <Feather name="map-pin" size={16} color="#388E3C" />
+                <Text className="ml-2 text-sm text-gray-600">Traveller</Text>
+              </View>
+              <View className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2 flex-row items-center">
+                <MaterialIcons name="music-note" size={16} color="#388E3C" />
+                <Text className="ml-2 text-sm text-gray-600">Music</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Sección Configuración y Cerrar Sesión */}
+          <View className="mt-8">
+            <TouchableOpacity
+              className="flex-row items-center justify-between bg-white rounded-lg px-4 py-3 mb-4 shadow-md"
+              onPress={() => router.push('../screens/screenSettings')}
+            >
+              <View className="flex-row items-center">
+                <MaterialIcons name="settings" size={24} color="#388E3C" />
+                <Text className="ml-4 text-base font-bold text-gray-800">Settings</Text>
+              </View>
+              <MaterialIcons name="keyboard-arrow-right" size={24} color="#388E3C" />
             </TouchableOpacity>
-            <TouchableOpacity className="px-6 py-2 bg-blue-500 rounded-full shadow-md">
-              <Text className="text-white font-bold">Follow</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full shadow-md">
-              <AntDesign name="sharealt" size={24} color="#388E3C" />
+
+            <TouchableOpacity
+              className="flex-row items-center justify-between bg-white rounded-lg px-4 py-3 shadow-md"
+              onPress={handleLogout}
+            >
+              <View className="flex-row items-center">
+                <MaterialIcons name="logout" size={24} color="red" />
+                <Text className="ml-4 text-base font-bold text-red-600">Log Out</Text>
+              </View>
+              <MaterialIcons name="keyboard-arrow-right" size={24} color="red" />
             </TouchableOpacity>
           </View>
         </MotiView>
