@@ -8,13 +8,15 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { MotiView } from 'moti';
 import LottieView from 'lottie-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import BottomNavBar from './BottomNavBar';
+import { useRouter } from 'expo-router'; // Asegúrate de tener expo-router instalado y configurado
 
-const ScreenMain = ({ navigation }) => {
+const ScreenMain = () => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [containerImages, setContainerImages] = useState({
     0: null,
@@ -23,14 +25,10 @@ const ScreenMain = ({ navigation }) => {
     3: null,
   });
 
-  const handleSearch = () => {
-    Alert.alert('Search', `Searching for: ${searchTerm}`);
-  };
-
   const handleImageUpload = async (containerIndex) => {
-    Alert.alert('Choose Option', 'Select an option to upload an image', [
+    Alert.alert('Selecciona una opción', 'Toma una foto o selecciona una imagen de la galería', [
       {
-        text: 'Open Camera',
+        text: 'Abrir cámara',
         onPress: async () => {
           const result = await ImagePicker.launchCameraAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -42,13 +40,13 @@ const ScreenMain = ({ navigation }) => {
           if (!result.canceled) {
             setContainerImages((prev) => ({
               ...prev,
-              [containerIndex]: result.uri,
+              [containerIndex]: result.assets[0].uri,
             }));
           }
         },
       },
       {
-        text: 'Select from Gallery',
+        text: 'Abrir galería',
         onPress: async () => {
           const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -60,17 +58,17 @@ const ScreenMain = ({ navigation }) => {
           if (!result.canceled) {
             setContainerImages((prev) => ({
               ...prev,
-              [containerIndex]: result.uri,
+              [containerIndex]: result.assets[0].uri,
             }));
           }
         },
       },
-      { text: 'Cancel', style: 'cancel' },
+      { text: 'Cancelar', style: 'cancel' },
     ]);
   };
 
-  const handleActionButtonPress = () => {
-    Alert.alert('Action', 'Performing additional action!');
+  const handleNavigateToCompareFood = () => {
+    router.push('../screens/screenCompareFood'); // Ruta de ScreenCompareFood
   };
 
   return (
@@ -93,7 +91,7 @@ const ScreenMain = ({ navigation }) => {
               onChangeText={setSearchTerm}
               className="flex-1 ml-2 text-gray-700"
             />
-            <TouchableOpacity onPress={handleSearch}>
+            <TouchableOpacity onPress={() => Alert.alert('Search', `Searching for: ${searchTerm}`)}>
               <Ionicons name="send" size={20} color="#388E3C" />
             </TouchableOpacity>
           </View>
@@ -101,16 +99,39 @@ const ScreenMain = ({ navigation }) => {
           {/* Contenedores de productos */}
           <View className="mt-8">
             <View className="flex flex-wrap flex-row justify-between">
-              {[{ label: 'Sube un Snap', color: '#4CAF50', items: '0 Productos' },
-                { label: 'Sube un Snap', color: '#FF5722', items: '0 Productos' },
-                { label: 'Sube un Snap', color: '#FFC107', items: '0 Productos' },
-                { label: 'Sube un Snap', color: '#3F51B5', items: '0 Productos' },
-              ].map((container, index) => (
+              {/* Primer contenedor redirige a ScreenCompareFood */}
+              <TouchableOpacity
+                onPress={handleNavigateToCompareFood}
+                className="w-[48%] aspect-square bg-white rounded-lg shadow-md p-4 mb-4"
+                style={{ backgroundColor: '#4CAF50' }}
+              >
+                {containerImages[0] ? (
+                  <Image
+                    source={{ uri: containerImages[0] }}
+                    className="absolute inset-0 w-full h-full rounded-lg"
+                    style={{ resizeMode: 'cover' }}
+                  />
+                ) : (
+                  <View className="flex-1 justify-between">
+                    <Text className="text-white font-bold text-lg">Sube un Snap</Text>
+                    <Text className="text-white mt-2">0 Productos</Text>
+                    <Ionicons
+                      name="camera"
+                      size={32}
+                      color="white"
+                      className="absolute bottom-4 right-4"
+                    />
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              {/* Otros contenedores mantienen la funcionalidad original */}
+              {[1, 2, 3].map((index) => (
                 <TouchableOpacity
                   key={index}
                   onPress={() => handleImageUpload(index)}
                   className="w-[48%] aspect-square bg-white rounded-lg shadow-md p-4 mb-4"
-                  style={{ backgroundColor: container.color }}
+                  style={{ backgroundColor: ['#FF5722', '#FFC107', '#3F51B5'][index - 1] }}
                 >
                   {containerImages[index] ? (
                     <Image
@@ -120,8 +141,8 @@ const ScreenMain = ({ navigation }) => {
                     />
                   ) : (
                     <View className="flex-1 justify-between">
-                      <Text className="text-white font-bold text-lg">{container.label}</Text>
-                      <Text className="text-white mt-2">{container.items}</Text>
+                      <Text className="text-white font-bold text-lg">Sube un Snap</Text>
+                      <Text className="text-white mt-2">0 Productos</Text>
                       <Ionicons
                         name="camera"
                         size={32}
@@ -137,7 +158,7 @@ const ScreenMain = ({ navigation }) => {
 
           {/* Botón animado */}
           <View className="mt-4 items-center">
-            <TouchableOpacity onPress={handleActionButtonPress} className="w-20 h-20">
+            <TouchableOpacity onPress={() => Alert.alert('Action', 'Performing additional action!')} className="w-20 h-20">
               <LottieView
                 source={require('../../assets/images/dados_animation_lottie.json')} // Ubicación del archivo local Lottie
                 autoPlay
