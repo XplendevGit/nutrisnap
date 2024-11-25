@@ -1,35 +1,44 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons'; // Iconos actualizados
 import { useRouter } from 'expo-router'; // Manejo de navegación
 import { MotiView } from 'moti';
 import BottomNavBar from './BottomNavBar'; // Componente NavBar
-import { auth, signOut } from '../../firebase-config'; // Firebase auth para cerrar sesión
+import { auth } from '../../firebase-config'; // Firebase auth para obtener instancia
+import { signOut } from 'firebase/auth'; // Importa signOut directamente desde Firebase
 
 const ScreenProfile = () => {
   const router = useRouter();
   const userEmail = auth.currentUser?.email || 'email@example.com'; // Recupera el correo de Firebase
 
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        router.replace('/login'); // Redirige al inicio de sesión
-      })
-      .catch((error) => {
-        console.error('Error al cerrar sesión:', error);
-      });
+  // Función para manejar el logout
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Llama a signOut con el objeto auth
+      console.log('Sesión cerrada exitosamente');
+      Alert.alert('Sesión cerrada', 'Has salido de tu cuenta correctamente.');
+      router.replace('../screens/screenLogin'); // Redirige al inicio de sesión
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error.message);
+      Alert.alert('Error', 'No se pudo cerrar sesión. Inténtalo nuevamente.');
+    }
   };
 
+  // Redirigir al usuario si no está autenticado
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        router.replace('../screens/screenLogin');
+      }
+    });
+    return unsubscribe; // Limpia el listener cuando el componente se desmonta
+  }, []);
+
   return (
-    <View className="flex-1 bg-gray-50 ">
-      {/* Contenido desplazable */}
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
-        className="flex-1"
-      >
-        {/* Encabezado con fondo degradado */}
+    <View className="flex-1 bg-gray-50">
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="flex-1">
+        {/* Encabezado */}
         <View className="bg-gradient-to-r from-blue-400 to-purple-500 h-48 w-full rounded-b-xl items-center justify-end relative">
-          {/* Botón de regresar */}
           <TouchableOpacity
             onPress={() => router.push('../screens/screenMain')}
             className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
@@ -37,7 +46,6 @@ const ScreenProfile = () => {
             <MaterialIcons name="arrow-back" size={24} color="#388E3C" />
           </TouchableOpacity>
 
-          {/* Botón de editar */}
           <TouchableOpacity
             onPress={() => router.push('../screens/screenEditUser')}
             className="absolute top-10 right-4 bg-[#388E3C] p-3 rounded-full shadow-md"
@@ -45,13 +53,11 @@ const ScreenProfile = () => {
             <MaterialIcons name="edit" size={24} color="white" />
           </TouchableOpacity>
 
-          {/* Imagen de perfil */}
           <View className="mb-[-30px] items-center">
             <Image
-              source={{ uri: 'https://via.placeholder.com/100' }} // Cambiar por foto del usuario
+              source={{ uri: 'https://via.placeholder.com/100' }}
               className="w-24 h-24 rounded-full border-4 border-white shadow-md"
             />
-            {/* Contenedor de + debajo de la imagen */}
             <TouchableOpacity
               className="absolute bottom-0 right-0 bg-[#388E3C] w-6 h-6 rounded-full flex items-center justify-center"
               onPress={() => router.push('../screens/screenEditUser')}
@@ -67,7 +73,6 @@ const ScreenProfile = () => {
           transition={{ type: 'timing', duration: 500 }}
           className="px-4 mt-6 pt-2"
         >
-          {/* Nombre de usuario y correo */}
           <Text className="text-center text-xl font-bold text-gray-800">Monica Miller</Text>
           <Text className="text-center text-sm text-gray-500">@{userEmail}</Text>
 

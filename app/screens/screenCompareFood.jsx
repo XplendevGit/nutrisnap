@@ -7,10 +7,13 @@ import {
   Alert,
 } from 'react-native';
 import { MotiView } from 'moti';
+import { MaterialIcons } from '@expo/vector-icons'; // Iconos actualizados
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router'; // Manejo de navegación
 import * as ImagePicker from 'expo-image-picker';
 
 const ScreenCompareFood = ({  }) => {
+  const router = useRouter();
   const [images, setImages] = useState([null, null, null]);
   const [progress, setProgress] = useState(0); // Representa la barra de progreso (0%, 33%, 66%, 100%)
 
@@ -57,7 +60,15 @@ const ScreenCompareFood = ({  }) => {
   };
 
   return (
-    <View className="flex-1 bg-[#F5F7FA] relative px-4 py-6 pt-16">
+    <View className="flex-1 bg-[#F5F7FA] relative px-4 py-6 pt-28">
+
+             {/* Botón de regresar */}
+             <TouchableOpacity
+            onPress={() => router.push('../screens/screenMain')}
+            className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
+          >
+            <MaterialIcons name="arrow-back" size={24} color="#388E3C" />
+          </TouchableOpacity>
       {/* Contenedor principal con el temporizador */}
       <MotiView
         from={{ opacity: 0, scale: 0.8 }}
