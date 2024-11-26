@@ -13,7 +13,7 @@ import { MotiView } from 'moti';
 import LottieView from 'lottie-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import BottomNavBar from './BottomNavBar';
-import { useRouter } from 'expo-router'; // Asegúrate de tener expo-router instalado y configurado
+import { useRouter } from 'expo-router';
 
 const ScreenMain = () => {
   const router = useRouter();
@@ -24,6 +24,41 @@ const ScreenMain = () => {
     2: null,
     3: null,
   });
+
+  const containerConfigs = [
+    {
+      id: 0,
+      backgroundColor: '#4CAF50',
+      title: 'Analizar Producto',
+      subtitle: '',
+      icon: 'search-outline', // Ionicons
+      onPress: () => handleImageUpload(0),
+    },
+    {
+      id: 1,
+      backgroundColor: '#FF5722',
+      title: 'Comparar Productos',
+      subtitle: '0 Productos',
+      icon: 'swap-horizontal-outline', // Ionicons
+      onPress: () => router.push('../screens/screenCompareFood'),
+    },
+    {
+      id: 2,
+      backgroundColor: '#FFC107',
+      title: 'Recetas Personalizadas',
+      subtitle: '',
+      icon: 'book-outline', // Ionicons
+      onPress: () => router.push('../screens/screenRecipes'),
+    },
+    {
+      id: 3,
+      backgroundColor: '#3F51B5',
+      title: 'Planes Nutricionales',
+      subtitle: '',
+      icon: 'heart-outline', // Ionicons
+      onPress: () => router.push('../screens/screenNutritionPlans'),
+    },
+  ];
 
   const handleImageUpload = async (containerIndex) => {
     Alert.alert('Selecciona una opción', 'Toma una foto o selecciona una imagen de la galería', [
@@ -67,10 +102,6 @@ const ScreenMain = () => {
     ]);
   };
 
-  const handleNavigateToCompareFood = () => {
-    router.push('../screens/screenCompareFood'); // Ruta de ScreenCompareFood
-  };
-
   return (
     <View className="flex-1 bg-[#F5F7FA] relative">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="flex-1">
@@ -96,55 +127,28 @@ const ScreenMain = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Contenedores de productos */}
+          {/* Contenedores dinámicos */}
           <View className="mt-8">
             <View className="flex flex-wrap flex-row justify-between">
-              {/* Primer contenedor redirige a ScreenCompareFood */}
-              <TouchableOpacity
-                onPress={handleNavigateToCompareFood}
-                className="w-[48%] aspect-square bg-white rounded-lg shadow-md p-4 mb-4"
-                style={{ backgroundColor: '#4CAF50' }}
-              >
-                {containerImages[0] ? (
-                  <Image
-                    source={{ uri: containerImages[0] }}
-                    className="absolute inset-0 w-full h-full rounded-lg"
-                    style={{ resizeMode: 'cover' }}
-                  />
-                ) : (
-                  <View className="flex-1 justify-between">
-                    <Text className="text-white font-bold text-lg">Sube un Snap</Text>
-                    <Text className="text-white mt-2">0 Productos</Text>
-                    <Ionicons
-                      name="camera"
-                      size={32}
-                      color="white"
-                      className="absolute bottom-4 right-4"
-                    />
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              {/* Otros contenedores mantienen la funcionalidad original */}
-              {[1, 2, 3].map((index) => (
+              {containerConfigs.map((config) => (
                 <TouchableOpacity
-                  key={index}
-                  onPress={() => handleImageUpload(index)}
+                  key={config.id}
+                  onPress={config.onPress}
                   className="w-[48%] aspect-square bg-white rounded-lg shadow-md p-4 mb-4"
-                  style={{ backgroundColor: ['#FF5722', '#FFC107', '#3F51B5'][index - 1] }}
+                  style={{ backgroundColor: config.backgroundColor }}
                 >
-                  {containerImages[index] ? (
+                  {containerImages[config.id] ? (
                     <Image
-                      source={{ uri: containerImages[index] }}
+                      source={{ uri: containerImages[config.id] }}
                       className="absolute inset-0 w-full h-full rounded-lg"
                       style={{ resizeMode: 'cover' }}
                     />
                   ) : (
                     <View className="flex-1 justify-between">
-                      <Text className="text-white font-bold text-lg">Sube un Snap</Text>
-                      <Text className="text-white mt-2">0 Productos</Text>
+                      <Text className="text-white font-bold text-lg">{config.title}</Text>
+                      <Text className="text-white mt-2">{config.subtitle}</Text>
                       <Ionicons
-                        name="camera"
+                        name={config.icon}
                         size={32}
                         color="white"
                         className="absolute bottom-4 right-4"
@@ -160,7 +164,7 @@ const ScreenMain = () => {
           <View className="mt-4 items-center">
             <TouchableOpacity onPress={() => Alert.alert('Action', 'Performing additional action!')} className="w-20 h-20">
               <LottieView
-                source={require('../../assets/images/dados_animation_lottie.json')} // Ubicación del archivo local Lottie
+                source={require('../../assets/images/dados_animation_lottie.json')}
                 autoPlay
                 loop
                 style={{
