@@ -17,7 +17,7 @@ const BottomNavBar = () => {
   };
 
   const handleNewsPress = () => {
-    router.push('../screens/screenNews'); // Navega a ScreenNews
+    router.push('../screens/screenPosts'); // Navega a ScreenNews
   };
 
   const handlePaymentPress = () => {
@@ -33,7 +33,7 @@ const BottomNavBar = () => {
     >
       {/* Botón Animado (Lottie) */}
       <TouchableOpacity
-        onPress={handleMainPress}
+        onPress={handleNewsPress}
         className="flex items-center"
         style={{ width: 50, height: 50 }}
       >
