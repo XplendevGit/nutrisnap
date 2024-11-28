@@ -28,10 +28,11 @@ const ScreenMain = () => {
   const containerConfigs = [
     {
       id: 0,
-      backgroundColor: '#4CAF50',
+      backgroundColor: '#3CC4B9',
       title: 'Analizar Producto',
       subtitle: '',
       icon: 'search-outline', // Ionicons
+      isPremium: false, // Identifica como Premium
       onPress: () => handleImageUpload(0),
     },
     {
@@ -40,6 +41,7 @@ const ScreenMain = () => {
       title: 'Comparar Productos',
       subtitle: '0 Productos',
       icon: 'swap-horizontal-outline', // Ionicons
+      isPremium: false, // Identifica como Premium
       onPress: () => router.push('../screens/screenCompareFood'),
     },
     {
@@ -48,6 +50,7 @@ const ScreenMain = () => {
       title: 'Recetas Personalizadas',
       subtitle: '',
       icon: 'book-outline', // Ionicons
+      isPremium: false, // Identifica como Premium
       onPress: () => router.push('../screens/screenRecipes'),
     },
     {
@@ -56,6 +59,7 @@ const ScreenMain = () => {
       title: 'Planes Nutricionales',
       subtitle: '',
       icon: 'heart-outline', // Ionicons
+      isPremium: true, // Identifica como Premium
       onPress: () => router.push('../screens/screenNutritionPlans'),
     },
   ];
@@ -115,7 +119,7 @@ const ScreenMain = () => {
           <Text className="text-lg text-gray-800 font-semibold">Hora de Snap!</Text>
           <Text className="text-2xl font-bold text-gray-900 mt-2">¿Qué Alimento Buscas?</Text>
           <View className="flex-row items-center mt-4 bg-white rounded-lg shadow-md p-4">
-            <Ionicons name="search" size={20} color="#388E3C" />
+            <Ionicons name="search" size={20} color="#3CC4B9" />
             <TextInput
               placeholder="Pan Integral Pierre..."
               value={searchTerm}
@@ -123,7 +127,7 @@ const ScreenMain = () => {
               className="flex-1 ml-2 text-gray-700"
             />
             <TouchableOpacity onPress={() => Alert.alert('Search', `Searching for: ${searchTerm}`)}>
-              <Ionicons name="send" size={20} color="#388E3C" />
+              <Ionicons name="send" size={20} color="#3CC4B9" />
             </TouchableOpacity>
           </View>
 
@@ -144,15 +148,29 @@ const ScreenMain = () => {
                       style={{ resizeMode: 'cover' }}
                     />
                   ) : (
-                    <View className="flex-1 justify-between">
+                    <View className="flex-1 justify-between pt-2">
                       <Text className="text-white font-bold text-lg">{config.title}</Text>
-                      <Text className="text-white mt-2">{config.subtitle}</Text>
                       <Ionicons
                         name={config.icon}
                         size={32}
                         color="white"
                         className="absolute bottom-4 right-4"
                       />
+                      {/* Estrella Premium para contenedores premium */}
+                      {config.isPremium && (
+                        <LottieView
+                          source={require('../../assets/animations/star.json')}
+                          autoPlay
+                          loop
+                          style={{
+                            position: 'absolute',
+                            top: 90,
+                            right: -15,
+                            width: 60,
+                            height: 60,
+                          }}
+                        />
+                      )}
                     </View>
                   )}
                 </TouchableOpacity>
@@ -164,7 +182,7 @@ const ScreenMain = () => {
           <View className="mt-4 items-center">
             <TouchableOpacity onPress={() => Alert.alert('Action', 'Performing additional action!')} className="w-20 h-20">
               <LottieView
-                source={require('../../assets/images/dados_animation_lottie.json')}
+                source={require('../../assets/animations/dados_animation_lottie.json')}
                 autoPlay
                 loop
                 style={{

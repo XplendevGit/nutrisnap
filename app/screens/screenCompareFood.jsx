@@ -3,16 +3,16 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   Alert,
+  Image,
 } from 'react-native';
 import { MotiView } from 'moti';
-import { MaterialIcons } from '@expo/vector-icons'; // Iconos actualizados
+import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router'; // Manejo de navegación
+import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 
-const ScreenCompareFood = ({  }) => {
+const ScreenCompareFood = () => {
   const router = useRouter();
   const [images, setImages] = useState([null, null, null]);
   const [progress, setProgress] = useState(0); // Representa la barra de progreso (0%, 33%, 66%, 100%)
@@ -62,60 +62,64 @@ const ScreenCompareFood = ({  }) => {
   return (
     <View className="flex-1 bg-[#F5F7FA] relative px-4 py-6 pt-28">
 
-             {/* Botón de regresar */}
-             <TouchableOpacity
-            onPress={() => router.push('../screens/screenMain')}
-            className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
-          >
-            <MaterialIcons name="arrow-back" size={24} color="#388E3C" />
-          </TouchableOpacity>
-      {/* Contenedor principal con el temporizador */}
-      <MotiView
-        from={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ type: 'spring', duration: 800 }}
-        className="flex items-center justify-center bg-white rounded-3xl py-16 shadow-md"
+      {/* Botón de regresar */}
+      <TouchableOpacity
+        onPress={() => router.push('../screens/screenMain')}
+        className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
       >
-        <Text className="text-black text-3xl font-bold">Comparar Alimentos</Text>
-        <Text className="text-gray-500 mt-2">Sube o Fotografía Tus Alimentos</Text>
+        <MaterialIcons name="arrow-back" size={24} color="#3CC4B9" />
+      </TouchableOpacity>
+
+      {/* Contenedor principal con animación mejorada */}
+      <MotiView
+        from={{ opacity: 0, translateY: -50, scale: 0.9 }}
+        animate={{ opacity: 1, translateY: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+        className="flex items-center justify-center bg-[#3CC4B9] rounded-3xl py-16 shadow-md"
+      >
+        <Text className="text-white text-3xl font-bold">Comparar Productos</Text>
+        <Text className="text-white/80 mt-2">Sube o Fotografía Tus Alimentos</Text>
         <TouchableOpacity
           className="mt-4 bg-white w-16 h-16 rounded-full items-center justify-center shadow-md"
           onPress={() => Alert.alert('Comparar Alimentos')}
         >
-          <Ionicons name="add" size={24} color="#FF5722" />
+          <Ionicons name="add" size={24} color="#3CC4B9" />
         </TouchableOpacity>
       </MotiView>
 
-      {/* Contenedor intermedio con la barra de progreso */}
+      {/* Contenedor intermedio con nueva animación */}
       <MotiView
-        from={{ opacity: 0, translateY: 50 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: 'spring', duration: 800, delay: 200 }}
-        className="bg-white rounded-xl shadow-md py-6 px-4 mt-6"
+        from={{ opacity: 0, translateY: 50, scale: 0.9 }}
+        animate={{ opacity: 1, translateY: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
+        className="bg-white rounded-xl shadow-md py-6 px-4 mt-6 border-[1px] border-[#3CC4B9]"
       >
         <Text className="text-lg font-semibold text-gray-800">Fase de comparación</Text>
-        <Text className="text-sm text-gray-500 mt-1">3 imágenes para completar</Text>
+        {/* Actualiza el texto con el número restante de imágenes */}
+        <Text className="text-sm text-gray-500 mt-1">
+          {3 - images.filter((img) => img !== null).length} imágenes para completar
+        </Text>
         <View className="bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
           <View
             style={{ width: `${progress}%` }}
-            className="bg-green-500 h-full"
+            className="bg-[#3CC4B9] h-full"
           />
         </View>
       </MotiView>
 
-      {/* Contenedor inferior con los 3 slots de imágenes */}
+      {/* Contenedor inferior con animación */}
       <MotiView
-        from={{ opacity: 0, translateY: 50 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ type: 'spring', duration: 800, delay: 400 }}
+        from={{ opacity: 0, translateY: 50, translateX: -20 }}
+        animate={{ opacity: 1, translateY: 0, translateX: 0 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 25, delay: 0.4 }}
         className="flex-row justify-between mt-8"
       >
         {images.map((image, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => handleImageUpload(index)}
-            className={`w-[30%] aspect-square rounded-lg shadow-md ${
-              image ? 'bg-green-500' : 'bg-white'
+            className={`w-[30%] aspect-square rounded-lg shadow-md border-[1px] border-[#3CC4B9] ${
+              image ? 'bg-[#3CC4B9]' : 'bg-white'
             } items-center justify-center`}
           >
             {image ? (

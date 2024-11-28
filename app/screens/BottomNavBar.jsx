@@ -60,7 +60,7 @@ const BottomNavBar = () => {
 
       {/* Botón Noticias */}
       <TouchableOpacity onPress={handleNewsPress} className="flex items-center">
-        <MaterialCommunityIcons name="newspaper-variant-outline" size={28} color="#388E3C" />
+        <MaterialCommunityIcons name="newspaper-variant-outline" size={28} color="#3CC4B9" />
         <Text className="text-xs text-gray-500">Noticias</Text>
       </TouchableOpacity>
 
@@ -70,7 +70,7 @@ const BottomNavBar = () => {
         className="relative flex items-center"
       >
         <View
-          className="rounded-full bg-[#388E3C] flex flex-row items-center justify-center shadow-lg"
+          className="rounded-full bg-[#3CC4B9] flex flex-row items-center justify-center shadow-lg"
           style={{ width: 60, height: 60 }}
         >
           <Image
