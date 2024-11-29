@@ -1,27 +1,55 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import LottieView from 'lottie-react-native';
+import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
 import { MotiView } from 'moti';
+import LottieView from 'lottie-react-native';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 
 const BottomNavBar = () => {
   const router = useRouter();
 
   const handleProfilePress = () => {
-    router.push('../screens/screenProfile'); // Navega a ScreenProfile
+    router.push('../screens/screenProfile');
   };
 
   const handleMainPress = () => {
-    router.push('../screens/screenMain'); // Navega a ScreenMain
+    router.push('../screens/screenMain');
   };
 
   const handleNewsPress = () => {
-    router.push('../screens/screenPosts'); // Navega a ScreenNews
+    router.push('../screens/screenPosts');
   };
 
   const handlePaymentPress = () => {
-    router.push('../screens/screenPayment'); // Navega a ScreenPayment
+    router.push('../screens/screenPayment');
+  };
+
+  const handleScanPress = async () => {
+    // Solicitar permisos de la cámara
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert(
+        "Permiso requerido",
+        "Se necesita acceso a la cámara para usar esta funcionalidad."
+      );
+      return;
+    }
+
+    // Abrir la cámara
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      // Navegar a la pantalla de resultados con la imagen capturada
+      router.push({
+        pathname: '../screens/screenResult', // Ruta de la pantalla de resultados
+        params: { imageUri: result.assets[0].uri }, // Pasar la imagen capturada
+      });
+    }
   };
 
   return (
@@ -34,12 +62,12 @@ const BottomNavBar = () => {
       {/* Botón Animado (Lottie) */}
       <TouchableOpacity
         onPress={handleNewsPress}
-        className="flex items-center"
+        className="flex items-center pt-[1px]"
         style={{ width: 50, height: 50 }}
       >
         <View
           style={{
-            width: 30,
+            width: 28,
             height: 30,
             justifyContent: 'center',
             alignItems: 'center',
@@ -58,8 +86,9 @@ const BottomNavBar = () => {
         <Text className="text-[16px] text-[#3CC4B9]">News</Text>
       </TouchableOpacity>
 
-      {/* Botón Noticias */}
-      <TouchableOpacity         onPress={handleNewsPress}
+      {/* Botón Escanear */}
+      <TouchableOpacity
+        onPress={handleScanPress}
         className="flex items-center pt-[1px]"
         style={{ width: 50, height: 50 }}
       >
@@ -71,13 +100,13 @@ const BottomNavBar = () => {
             alignItems: 'center',
           }}
         >
-        <Image
-          source={require('../../assets/images/escanear.png')} // Ruta del archivo PNG
-          style={{
-            width: 28,
-            height: 28,
-          }}
-        />
+          <Image
+            source={require('../../assets/images/escanear.png')} // Ruta del archivo PNG
+            style={{
+              width: 28,
+              height: 28,
+            }}
+          />
         </View>
         <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Scan</Text>
       </TouchableOpacity>
@@ -85,7 +114,7 @@ const BottomNavBar = () => {
       {/* Botón Central (Logo1) */}
       <TouchableOpacity
         onPress={handleMainPress}
-        className="relative flex items-center "
+        className="relative flex items-center"
       >
         <View
           className="rounded-full bg-[#3CC4B9] flex flex-row items-center justify-center shadow-lg"
@@ -100,7 +129,7 @@ const BottomNavBar = () => {
 
       {/* Botón Registros */}
       <TouchableOpacity onPress={handlePaymentPress} className="flex items-center pt-[2px]">
-      <View
+        <View
           style={{
             width: 30,
             height: 30,
@@ -108,34 +137,34 @@ const BottomNavBar = () => {
             alignItems: 'center',
           }}
         >
-        <Image
-          source={require('../../assets/images/registro.png')} // Ruta del archivo PNG
-          style={{
-            width: 38,
-            height: 38,
-          }}
-        />
+          <Image
+            source={require('../../assets/images/registro.png')} // Ruta del archivo PNG
+            style={{
+              width: 38,
+              height: 38,
+            }}
+          />
         </View>
         <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Registro</Text>
       </TouchableOpacity>
 
       {/* Botón Mi Perfil */}
       <TouchableOpacity onPress={handleProfilePress} className="pt-[3px] flex items-center">
-      <View
+        <View
           style={{
-            width: 30,
-            height: 30,
+            width: 33,
+            height: 29,
             justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-        <Image
-          source={require('../../assets/images/perfil.png')} // Ruta del archivo PNG
-          style={{
-            width: 32,
-            height: 32,
-          }}
-        />
+          <Image
+            source={require('../../assets/images/perfil.png')} // Ruta del archivo PNG
+            style={{
+              width: 32,
+              height: 32,
+            }}
+          />
         </View>
         <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Perfil</Text>
       </TouchableOpacity>
