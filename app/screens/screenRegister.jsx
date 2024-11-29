@@ -9,16 +9,16 @@ import {
   Image,
   Alert,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../../firebase-config";
 import { useRouter } from "expo-router";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-
+import { MotiView } from "moti";
 
 const ScreenRegister = () => {
   const router = useRouter();
@@ -36,6 +36,8 @@ const ScreenRegister = () => {
   const [profileImage, setProfileImage] = useState(
     "https://via.placeholder.com/150"
   );
+
+  const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
   // Opciones
   const dietOptions = [
@@ -62,32 +64,42 @@ const ScreenRegister = () => {
 
   // Manejo de selección de imagen
   const handleImagePick = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setProfileImage(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Error al seleccionar imagen:", error.message);
+      Alert.alert("Error", "No se pudo seleccionar la imagen. Inténtalo nuevamente.");
     }
   };
 
   // Creación de cuenta y guardado en Firestore
   const handleCreateAccount = async () => {
-    // Validación de campos obligatorios
+    setIsLoading(true); // Muestra el indicador al inicio
+
     if (
       !email.trim() ||
       !password.trim() ||
       !confirmPassword.trim() ||
       !fullName.trim() ||
+      !objective.trim() ||
       !diet
     ) {
+      setIsLoading(false); // Oculta el indicador si hay error
       Alert.alert("Error", "Todos los campos obligatorios deben ser completados.");
       return;
     }
 
     if (password !== confirmPassword) {
+      setIsLoading(false); // Oculta el indicador si hay error
       Alert.alert("Error", "Las contraseñas no coinciden.");
       return;
     }
@@ -99,7 +111,7 @@ const ScreenRegister = () => {
       const userData = {
         email: email.trim(),
         fullName: fullName.trim(),
-        objective: objective.trim() || "No especificado",
+        objective: objective.trim(),
         conditions: conditions.trim() || "No especificado",
         diet: diet || "No especificado",
         activities: activities.length > 0 ? activities : ["No especificadas"],
@@ -109,10 +121,14 @@ const ScreenRegister = () => {
 
       await setDoc(doc(db, "users", user.uid), userData);
 
-      Alert.alert("¡Éxito!", "¡Cuenta creada exitosamente!");
-      router.push("../screens/screenMain");
+      // Muestra la transición antes de redirigir
+      setTimeout(() => {
+        setIsLoading(false); // Oculta el indicador
+        router.push("../screens/screenMain");
+      }, 2000);
     } catch (error) {
-      console.error("Error en la creación de cuenta:", error.message);
+      setIsLoading(false); // Oculta el indicador si hay error
+      console.error("Error al registrar el usuario:", error.message);
       Alert.alert("Error", "Error al registrar el usuario. Intenta con un correo diferente.");
     }
   };
@@ -151,20 +167,27 @@ const ScreenRegister = () => {
         </TouchableOpacity>
 
         {/* Imagen de perfil */}
-        <TouchableOpacity onPress={handleImagePick} className="mb-4">
-          <Image
-            source={{ uri: profileImage }}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              marginBottom: 10,
-              borderWidth: 2,
-              borderColor: "#3CC4B9",
-            }}
-          />
-          <Text className="text-[#3CC4B9] text-center">Cambiar Imagen</Text>
-        </TouchableOpacity>
+        <MotiView
+          from={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", duration: 500 }}
+          className="mb-4"
+        >
+          <TouchableOpacity onPress={handleImagePick}>
+            <Image
+              source={{ uri: profileImage }}
+              style={{
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                marginBottom: 10,
+                borderWidth: 2,
+                borderColor: "#3CC4B9",
+              }}
+            />
+            <Text className="text-[#3CC4B9] text-center">Cambiar Imagen</Text>
+          </TouchableOpacity>
+        </MotiView>
 
         {/* Campos de entrada */}
         <View className="space-y-4 w-full items-center">
@@ -185,6 +208,13 @@ const ScreenRegister = () => {
           />
           <TextInput
             className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
+            placeholder="Objetivo"
+            placeholderTextColor="#888"
+            value={objective}
+            onChangeText={setObjective}
+          />
+          <TextInput
+            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
             placeholder="Contraseña"
             placeholderTextColor="#888"
             secureTextEntry
@@ -198,13 +228,6 @@ const ScreenRegister = () => {
             secureTextEntry
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-          />
-          <TextInput
-            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
-            placeholder="Enfermedades (opcional)"
-            placeholderTextColor="#888"
-            value={diseases}
-            onChangeText={setDiseases}
           />
         </View>
 
@@ -263,6 +286,17 @@ const ScreenRegister = () => {
           </View>
         </View>
 
+        {/* Enfermedades */}
+        <View className="w-full mt-6 flex justify-center items-center">
+          <TextInput
+            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
+            placeholder="Enfermedades (opcional)"
+            placeholderTextColor="#888"
+            value={diseases}
+            onChangeText={setDiseases}
+          />
+        </View>
+
         {/* Botón de registro */}
         <TouchableOpacity
           className="flex mb-12 h-[56px] w-[90%] bg-[#3CC4B9] rounded-full mt-10 justify-center items-center"
@@ -270,6 +304,14 @@ const ScreenRegister = () => {
         >
           <Text className="text-[#FFFFFF] text-[16px]">Crear Cuenta</Text>
         </TouchableOpacity>
+
+        {/* Indicador de carga */}
+        {isLoading && (
+          <View className="absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+            <ActivityIndicator size="large" color="#FFFFFF" />
+            <Text className="text-white text-lg mt-4">Registrando...</Text>
+          </View>
+        )}
       </ScrollView>
     </TouchableWithoutFeedback>
   );
