@@ -9,7 +9,6 @@ import {
   Image,
   Alert,
   ScrollView,
-  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -19,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../../firebase-config";
 import { useRouter } from "expo-router";
 import { MotiView } from "moti";
+import { WifiLoader } from "react-awesome-loaders"; // Importa el WifiLoader
 
 const ScreenRegister = () => {
   const router = useRouter();
@@ -189,127 +189,17 @@ const ScreenRegister = () => {
           </TouchableOpacity>
         </MotiView>
 
-        {/* Campos de entrada */}
-        <View className="space-y-4 w-full items-center">
-          <TextInput
-            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
-            placeholder="Nombre"
-            placeholderTextColor="#888"
-            value={fullName}
-            onChangeText={setFullName}
-          />
-          <TextInput
-            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
-            placeholder="Email"
-            placeholderTextColor="#888"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
-            placeholder="Objetivo"
-            placeholderTextColor="#888"
-            value={objective}
-            onChangeText={setObjective}
-          />
-          <TextInput
-            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
-            placeholder="Contraseña"
-            placeholderTextColor="#888"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TextInput
-            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
-            placeholder="Confirmar Contraseña"
-            placeholderTextColor="#888"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-        </View>
-
-        {/* Selector de dieta */}
-        <View className="w-full mt-6 pt-6">
-          <Text className="text-center text-lg font-bold">Selecciona tu dieta</Text>
-          <View className="flex-row flex-wrap justify-center mt-4">
-            {dietOptions.map((option) => (
-              <TouchableOpacity
-                key={option}
-                onPress={() => handleSelectDiet(option)}
-                className={`px-4 py-2 rounded-full m-1 ${
-                  diet === option ? "bg-[#3CC4B9]" : "bg-gray-200"
-                }`}
-              >
-                <Text
-                  className={`text-sm ${
-                    diet === option ? "text-white" : "text-gray-700"
-                  }`}
-                >
-                  {option}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Selector de actividades */}
-        <View className="w-full mt-6 pt-6">
-          <Text className="text-center text-lg font-bold">
-            Selecciona tus actividades
-          </Text>
-          <View className="flex-row flex-wrap justify-center mt-4">
-            {activityOptions.map(({ name, icon }) => (
-              <TouchableOpacity
-                key={name}
-                onPress={() => handleSelectActivity(name)}
-                className={`px-4 py-2 rounded-full m-1 flex-row justify-between items-center ${
-                  activities.includes(name) ? "bg-[#3CC4B9]" : "bg-gray-200"
-                }`}
-              >
-                <Text
-                  className={`text-sm ${
-                    activities.includes(name) ? "text-white" : "text-gray-700"
-                  }`}
-                >
-                  {name}
-                </Text>
-                <MaterialCommunityIcons
-                  name={icon}
-                  size={20}
-                  color={activities.includes(name) ? "white" : "gray"}
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Enfermedades */}
-        <View className="w-full mt-6 flex justify-center items-center">
-          <TextInput
-            className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
-            placeholder="Enfermedades (opcional)"
-            placeholderTextColor="#888"
-            value={diseases}
-            onChangeText={setDiseases}
-          />
-        </View>
-
-        {/* Botón de registro */}
-        <TouchableOpacity
-          className="flex mb-12 h-[56px] w-[90%] bg-[#3CC4B9] rounded-full mt-10 justify-center items-center"
-          onPress={handleCreateAccount}
-        >
-          <Text className="text-[#FFFFFF] text-[16px]">Crear Cuenta</Text>
-        </TouchableOpacity>
-
         {/* Indicador de carga */}
         {isLoading && (
-          <View className="absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-            <ActivityIndicator size="large" color="#FFFFFF" />
-            <Text className="text-white text-lg mt-4">Registrando...</Text>
+          <View className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-80">
+            <WifiLoader
+              background={"transparent"}
+              desktopSize={"150px"}
+              mobileSize={"100px"}
+              text={"Registrando..."}
+              backColor={"#3CC4B9"}
+              frontColor={"#4A90E2"}
+            />
           </View>
         )}
       </ScrollView>
