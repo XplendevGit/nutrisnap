@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Configuración de Firebase
@@ -20,7 +21,8 @@ initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-// Obtener la instancia de Auth para usar con signOut
+// Obtener las instancias de Auth y Firestore
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { auth };
+export { auth, db };
