@@ -46,7 +46,7 @@ const BottomNavBar = () => {
           }}
         >
           <LottieView
-            source={require('../../assets/images/icon3.json')} // Ruta del archivo Lottie
+            source={require('../../assets/animations/icon3.json')} // Ruta del archivo Lottie
             autoPlay
             loop
             style={{
@@ -55,19 +55,37 @@ const BottomNavBar = () => {
             }}
           />
         </View>
-        <Text className="text-xs text-gray-500">Noticias</Text>
+        <Text className="text-[16px] text-[#3CC4B9]">News</Text>
       </TouchableOpacity>
 
       {/* Botón Noticias */}
-      <TouchableOpacity onPress={handleNewsPress} className="flex items-center">
-        <MaterialCommunityIcons name="newspaper-variant-outline" size={28} color="#3CC4B9" />
-        <Text className="text-xs text-gray-500">Noticias</Text>
+      <TouchableOpacity         onPress={handleNewsPress}
+        className="flex items-center pt-[1px]"
+        style={{ width: 50, height: 50 }}
+      >
+        <View
+          style={{
+            width: 30,
+            height: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+        <Image
+          source={require('../../assets/images/escanear.png')} // Ruta del archivo PNG
+          style={{
+            width: 28,
+            height: 28,
+          }}
+        />
+        </View>
+        <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Scan</Text>
       </TouchableOpacity>
 
       {/* Botón Central (Logo1) */}
       <TouchableOpacity
         onPress={handleMainPress}
-        className="relative flex items-center"
+        className="relative flex items-center "
       >
         <View
           className="rounded-full bg-[#3CC4B9] flex flex-row items-center justify-center shadow-lg"
@@ -81,15 +99,45 @@ const BottomNavBar = () => {
       </TouchableOpacity>
 
       {/* Botón Registros */}
-      <TouchableOpacity onPress={handlePaymentPress} className="flex items-center">
-        <Ionicons name="document-text-outline" size={28} color="#388E3C" />
-        <Text className="text-xs text-gray-500">Registros</Text>
+      <TouchableOpacity onPress={handlePaymentPress} className="flex items-center pt-[2px]">
+      <View
+          style={{
+            width: 30,
+            height: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+        <Image
+          source={require('../../assets/images/registro.png')} // Ruta del archivo PNG
+          style={{
+            width: 38,
+            height: 38,
+          }}
+        />
+        </View>
+        <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Registro</Text>
       </TouchableOpacity>
 
       {/* Botón Mi Perfil */}
-      <TouchableOpacity onPress={handleProfilePress} className="flex items-center">
-        <Ionicons name="person-outline" size={28} color="#388E3C" />
-        <Text className="text-xs text-gray-500">Mi Perfil</Text>
+      <TouchableOpacity onPress={handleProfilePress} className="pt-[3px] flex items-center">
+      <View
+          style={{
+            width: 30,
+            height: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+        <Image
+          source={require('../../assets/images/perfil.png')} // Ruta del archivo PNG
+          style={{
+            width: 32,
+            height: 32,
+          }}
+        />
+        </View>
+        <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Perfil</Text>
       </TouchableOpacity>
     </MotiView>
   );
