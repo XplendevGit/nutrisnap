@@ -7,16 +7,17 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Image,
-  Alert,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { MaterialIcons } from "@expo/vector-icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../../firebase-config";
 import { useRouter } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+import CustomAlert from "../../app/components/customAlert";
 
 const ScreenRegister = () => {
   const router = useRouter();
@@ -25,41 +26,49 @@ const ScreenRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [fullName, setFullName] = useState("");
   const [profileImage, setProfileImage] = useState(
-    "https://via.placeholder.com/150"
+    "https://via.placeholder.com/150" // Imagen por defecto
   );
-  const [objective, setObjective] = useState("");
-  const [age, setAge] = useState("");
-  const [weight, setWeight] = useState("");
-  const [height, setHeight] = useState("");
-  const [gender, setGender] = useState("");
-  const [activityLevel, setActivityLevel] = useState("");
-  const [diet, setDiet] = useState("");
-  const [conditions, setConditions] = useState("");
-  const [diseases, setDiseases] = useState("");
+  const [diet, setDiet] = useState("No especificado");
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState({ visible: false, type: "", title: "", message: "" });
 
-  // Opciones
-  const genderOptions = ["Masculino", "Femenino", "Otro"];
-  const activityLevels = ["Bajo", "Moderado", "Alto"];
-  const dietOptions = [
-    "Carnívoro",
-    "Vegetariano",
-    "Vegano",
-    "Pescetariano",
-    "Sin Restricciones",
-    "Otro",
-  ];
-  const activityOptions = [
-    "Yoga",
-    "Correr",
-    "Natación",
-    "Fútbol",
-    "Ciclismo",
-    "Gimnasio",
-  ];
+  const showLoading = () => setIsLoading(true);
+  const hideLoading = () => setIsLoading(false);
+
+  const showAlert = (type, title, message) => {
+    setAlert({ visible: true, type, title, message });
+  };
+
+  const handleAlertClose = () => {
+    setAlert({ visible: false });
+  };
+
+  // Validar datos
+  const isValidForm = () => {
+    if (
+      !email.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim() ||
+      !fullName.trim() ||
+      !diet.trim() ||
+      activities.length === 0
+    ) {
+      showAlert("error", "Error", "Todos los campos obligatorios deben ser completados.");
+      return false;
+    }
+
+    if (password !== confirmPassword) {
+      showAlert("error", "Error", "Las contraseñas no coinciden.");
+      return false;
+    }
+
+    return true;
+  };
 
   // Selección de imagen
   const handleImagePick = async () => {
@@ -75,25 +84,27 @@ const ScreenRegister = () => {
         setProfileImage(result.assets[0].uri);
       }
     } catch (error) {
-      Alert.alert("Error", "No se pudo seleccionar la imagen.");
+      showAlert("error", "Error", "No se pudo seleccionar la imagen.");
+    }
+  };
+
+  const handleSelectDiet = (selectedDiet) => {
+    setDiet(selectedDiet);
+  };
+
+  const handleSelectActivity = (selectedActivity) => {
+    if (activities.includes(selectedActivity)) {
+      setActivities(activities.filter((activity) => activity !== selectedActivity));
+    } else {
+      setActivities([...activities, selectedActivity]);
     }
   };
 
   // Registro de usuario
   const handleCreateAccount = async () => {
-    setIsLoading(true);
+    if (!isValidForm()) return;
 
-    if (!email || !password || !confirmPassword || !fullName || !age || !weight || !height || !gender || !objective) {
-      setIsLoading(false);
-      Alert.alert("Error", "Todos los campos obligatorios deben ser completados.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setIsLoading(false);
-      Alert.alert("Error", "Las contraseñas no coinciden.");
-      return;
-    }
+    showLoading();
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -101,19 +112,18 @@ const ScreenRegister = () => {
 
       // Datos del usuario
       const userData = {
+        user_ID: user.uid,
         email,
         fullName,
+        description: "No especificado",
         profileImage,
-        objective,
-        age: parseInt(age),
-        weight: parseFloat(weight),
-        height: parseFloat(height),
-        gender,
-        activityLevel,
+        objective: "No especificado",
+        gender: "No especificado",
+        activityLevel: "No especificado",
+        diseases: "No especificado",
+        conditions: "No especificado",
         diet,
-        conditions: conditions || "No especificado",
-        diseases: diseases || "No especificado",
-        activities: activities.length > 0 ? activities : ["No especificadas"],
+        activities,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         premiumStatus: false,
@@ -126,145 +136,153 @@ const ScreenRegister = () => {
         followers: [],
       };
 
-      // Guardar en Firestore
       await setDoc(doc(db, "users", user.uid), userData);
 
-      Alert.alert("Éxito", "Cuenta creada exitosamente.");
-      router.push("../screens/screenMain");
+      showAlert("success", "¡Éxito!", "Cuenta creada exitosamente.");
+      setTimeout(() => {
+        handleAlertClose();
+        router.push("../screens/screenMain");
+      }, 3000);
     } catch (error) {
-      Alert.alert("Error", "No se pudo crear la cuenta.");
+      showAlert("error", "Error", "No se pudo crear la cuenta.");
     } finally {
-      setIsLoading(false);
+      hideLoading();
     }
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingHorizontal: 20,
-          paddingVertical: 50,
-        }}
-      >
-        <StatusBar style="light" />
-
-        {isLoading && (
-          <View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1,
-            }}
-          >
-            <ActivityIndicator size="large" color="#3CC4B9" />
-            <Text style={{ marginTop: 10, color: "#fff" }}>Registrando...</Text>
-          </View>
-        )}
-
-        {/* Imagen de perfil */}
-        <TouchableOpacity onPress={handleImagePick}>
-          <Image
-            source={{ uri: profileImage }}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              borderWidth: 2,
-              borderColor: "#3CC4B9",
-              marginBottom: 20,
-            }}
-          />
-          <Text style={{ color: "#3CC4B9" }}>Seleccionar Imagen</Text>
-        </TouchableOpacity>
-
-        {/* Campos del formulario */}
-        <TextInput
-          placeholder="Nombre completo"
-          value={fullName}
-          onChangeText={setFullName}
-          style={{
-            borderBottomWidth: 1,
-            borderColor: "#ccc",
-            marginBottom: 20,
-            width: "100%",
-            padding: 10,
+      <View className="flex-1 bg-white">
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: 50,
           }}
-        />
-        <TextInput
-          placeholder="Correo electrónico"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          style={{
-            borderBottomWidth: 1,
-            borderColor: "#ccc",
-            marginBottom: 20,
-            width: "100%",
-            padding: 10,
-          }}
-        />
-        <TextInput
-          placeholder="Edad"
-          value={age}
-          onChangeText={setAge}
-          keyboardType="numeric"
-          style={{
-            borderBottomWidth: 1,
-            borderColor: "#ccc",
-            marginBottom: 20,
-            width: "100%",
-            padding: 10,
-          }}
-        />
-        <TextInput
-          placeholder="Altura (cm)"
-          value={height}
-          onChangeText={setHeight}
-          keyboardType="numeric"
-          style={{
-            borderBottomWidth: 1,
-            borderColor: "#ccc",
-            marginBottom: 20,
-            width: "100%",
-            padding: 10,
-          }}
-        />
-        <TextInput
-          placeholder="Peso (kg)"
-          value={weight}
-          onChangeText={setWeight}
-          keyboardType="numeric"
-          style={{
-            borderBottomWidth: 1,
-            borderColor: "#ccc",
-            marginBottom: 20,
-            width: "100%",
-            padding: 10,
-          }}
-        />
-        <TouchableOpacity
-          onPress={handleCreateAccount}
-          style={{
-            backgroundColor: "#3CC4B9",
-            paddingVertical: 15,
-            borderRadius: 10,
-            width: "100%",
-            alignItems: "center",
-            marginTop: 20,
-          }}
+          className="px-5 py-10"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>Crear Cuenta</Text>
-        </TouchableOpacity>
-      </ScrollView>
+          <StatusBar style="light" />
+
+          {isLoading && (
+            <View className="absolute w-full h-full inset-0 bg-black/50 flex justify-center items-center z-50">
+              <ActivityIndicator size="large" color="#3CC4B9" />
+              <Text className="text-white text-lg mt-4">Registrando...</Text>
+            </View>
+          )}
+
+          <CustomAlert
+            visible={alert.visible}
+            type={alert.type}
+            title={alert.title}
+            message={alert.message}
+            onClose={handleAlertClose}
+          />
+
+          <TouchableOpacity
+            onPress={handleImagePick}
+            className="flex items-center mb-6"
+          >
+            <Image
+              source={{ uri: profileImage }}
+              className="w-36 h-36 rounded-full border-2 border-[#3CC4B9]"
+            />
+            <Text className="text-[#3CC4B9] mt-2">Cambiar Imagen</Text>
+          </TouchableOpacity>
+
+          <TextInput
+            placeholder="Nombre"
+            value={fullName}
+            onChangeText={setFullName}
+            className="bg-gray-100 rounded-full px-4 py-2 mb-4"
+          />
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            className="bg-gray-100 rounded-full px-4 py-2 mb-4"
+          />
+
+          <View className="relative mb-4">
+            <TextInput
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!passwordVisible}
+              className="bg-gray-100 rounded-full px-4 py-2 pr-10"
+            />
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              className="absolute right-4 top-3"
+            >
+              <FontAwesome
+                name={passwordVisible ? "eye" : "eye-slash"}
+                size={20}
+                color="#3CC4B9"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View className="relative mb-4">
+            <TextInput
+              placeholder="Confirmar Contraseña"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry={!confirmPasswordVisible}
+              className="bg-gray-100 rounded-full px-4 py-2 pr-10"
+            />
+            <TouchableOpacity
+              onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+              className="absolute right-4 top-3"
+            >
+              <FontAwesome
+                name={confirmPasswordVisible ? "eye" : "eye-slash"}
+                size={20}
+                color="#3CC4B9"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <Text className="text-lg font-bold text-[#3CC4B9] mb-2">Selecciona tu dieta</Text>
+          <View className="flex flex-wrap flex-row gap-2 mb-6">
+            {["Carnívoro", "Vegetariano", "Vegano", "Pescetariano", "Sin Restricciones", "Otro"].map(
+              (option) => (
+                <TouchableOpacity
+                  key={option}
+                  onPress={() => handleSelectDiet(option)}
+                  className={`px-4 py-2 rounded-full border ${
+                    diet === option ? "bg-[#3CC4B9] text-white" : "border-gray-300"
+                  }`}
+                >
+                  <Text>{option}</Text>
+                </TouchableOpacity>
+              )
+            )}
+          </View>
+
+          <Text className="text-lg font-bold text-[#3CC4B9] mb-2">Selecciona tus actividades</Text>
+          <View className="flex flex-wrap flex-row gap-2 mb-6">
+            {["Yoga", "Correr", "Natación", "Fútbol", "Ciclismo", "Gimnasio"].map((activity) => (
+              <TouchableOpacity
+                key={activity}
+                onPress={() => handleSelectActivity(activity)}
+                className={`px-4 py-2 rounded-full border ${
+                  activities.includes(activity) ? "bg-[#3CC4B9] text-white" : "border-gray-300"
+                }`}
+              >
+                <Text>{activity}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <TouchableOpacity
+            onPress={handleCreateAccount}
+            className="bg-[#3CC4B9] py-3 rounded-md"
+          >
+            <Text className="text-white font-bold text-center">Crear Cuenta</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

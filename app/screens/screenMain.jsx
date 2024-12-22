@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MotiView } from 'moti';
 import LottieView from 'lottie-react-native';
 import * as ImagePicker from 'expo-image-picker';
-import BottomNavBar from './BottomNavBar';
+import BottomNavBar from '../components/BottomNavBar';
 import { useRouter } from 'expo-router';
 
 const ScreenMain = () => {

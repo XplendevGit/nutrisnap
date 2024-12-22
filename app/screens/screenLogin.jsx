@@ -141,7 +141,7 @@ const ScreenLogin = ({
 
           {/* Loading Overlay */}
           {loading && (
-            <View className="absolute inset-0 bg-black/50 flex justify-center items-center z-50">
+            <View className="absolute w-full h-full inset-0 bg-black/50 flex justify-center items-center z-50">
               <ActivityIndicator size="large" color="#3CC4B9" />
               <Text className="text-[#FFFFFF] text-lg mt-4">Cargando...</Text>
             </View>

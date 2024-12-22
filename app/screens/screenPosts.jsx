@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import BottomNavBar from './BottomNavBar';
+import BottomNavBar from '../components/BottomNavBar';
 
 const postsData = [
   {
