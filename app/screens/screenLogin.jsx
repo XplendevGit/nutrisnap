@@ -4,11 +4,11 @@ import {
   Text,
   Image,
   TextInput,
-  Keyboard,
   TouchableWithoutFeedback,
+  Keyboard,
   KeyboardAvoidingView,
   TouchableOpacity,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -18,9 +18,11 @@ import { auth } from "../../firebase-config";
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
+  signInWithCredential,
 } from "firebase/auth";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
+import CustomAlert from "../../app/components/customAlert";
 
 // Necesario para expo-auth-session
 WebBrowser.maybeCompleteAuthSession();
@@ -36,6 +38,8 @@ const ScreenLogin = ({
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({ visible: false, type: "", title: "", message: "" });
   const router = useRouter();
 
   // Configuración de Google Sign-In con expo-auth-session
@@ -46,40 +50,73 @@ const ScreenLogin = ({
     webClientId: "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com",
   });
 
-  // Función para manejar el inicio de sesión con Google
   const handleGoogleSignIn = async () => {
-    const result = await promptAsync();
-    if (result.type === "success") {
-      const { id_token } = result.params;
-
-      try {
+    setLoading(true);
+    try {
+      const result = await promptAsync();
+      if (result.type === "success") {
+        const { id_token } = result.params;
         const credential = GoogleAuthProvider.credential(id_token);
         const userCredential = await signInWithCredential(auth, credential);
-        console.log("Inicio de sesión con Google exitoso", userCredential.user);
-        router.push("../screens/screenMain");
-      } catch (error) {
-        console.error("Error en la autenticación con Google:", error);
-        Alert.alert("Error", "No se pudo iniciar sesión con Google.");
+        showSuccessAlert();
       }
-    } else {
-      console.log("Google Sign-In cancelado o fallido");
+    } catch (error) {
+      showErrorAlert("No se pudo iniciar sesión con Google.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Función para manejar el inicio de sesión con correo y contraseña
+  const showLoading = () => setLoading(true);
+  const hideLoading = () => setLoading(false);
+
+  const showSuccessAlert = () => {
+    setAlert({
+      visible: true,
+      type: "success",
+      title: "¡Inicio de Sesión Exitoso!",
+      message: "Bienvenido a NutriSnap.",
+    });
+  
+    setTimeout(() => {
+      // Redirigir directamente después de 3 segundos
+      router.push("../screens/screenMain");
+      setAlert({ visible: false });
+    }, 2000);
+  };
+  
+  const handleAlertClose = () => {
+    setAlert({ visible: false });
+    // Redirigir si es un éxito
+    if (alert.type === "success") {
+      router.push("../screens/screenMain");
+    }
+  };
+  
+
+  const showErrorAlert = (message) => {
+    setAlert({
+      visible: true,
+      type: "error",
+      title: "Error",
+      message,
+    });
+  };
+
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Por favor, ingresa un email y contraseña válidos.");
+      showErrorAlert("Por favor, ingresa un email y contraseña válidos.");
       return;
     }
 
+    showLoading();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Inicio Correcto!", userCredential.user);
-      router.push("../screens/screenMain");
+      await signInWithEmailAndPassword(auth, email, password);
+      showSuccessAlert();
     } catch (error) {
-      console.error("Error en el inicio de sesión:", error.message);
-      Alert.alert("Error", "Email o contraseña incorrectos.");
+      showErrorAlert("Email o contraseña incorrectos.");
+    } finally {
+      hideLoading();
     }
   };
 
@@ -93,7 +130,24 @@ const ScreenLogin = ({
         >
           <StatusBar style="light" />
 
-          {/* Logo NutriSnap*/}
+          {/* CustomAlert */}
+          <CustomAlert
+            visible={alert.visible}
+            type={alert.type}
+            title={alert.title}
+            message={alert.message}
+            onClose={handleAlertClose}
+          />
+
+          {/* Loading Overlay */}
+          {loading && (
+            <View className="absolute inset-0 bg-black/50 flex justify-center items-center z-50">
+              <ActivityIndicator size="large" color="#3CC4B9" />
+              <Text className="text-[#FFFFFF] text-lg mt-4">Cargando...</Text>
+            </View>
+          )}
+
+          {/* Logo NutriSnap */}
           <View className="flex items-center mt-10 mb-6">
             <Image
               source={logoImage}
@@ -107,8 +161,7 @@ const ScreenLogin = ({
 
           {/* Inputs y Botones */}
           <View className="flex w-full space-y-2 items-center justify-center">
-
-            {/* Email Button*/}
+            {/* Email Input */}
             <TextInput
               className="flex h-[50px] w-[90%] bg-[#f1f1f1] rounded-full px-4"
               placeholder="Email"
@@ -116,16 +169,16 @@ const ScreenLogin = ({
               onChangeText={(text) => setEmail(text)}
             />
 
-            {/* Contraseña Button*/}
+            {/* Contraseña Input */}
             <TextInput
               className="flex h-[50px] w-[90%] bg-[#f1f1f1] rounded-full px-4"
               placeholder="Contraseña"
               placeholderTextColor="#888"
-              onChangeText={(text) => setPassword(text)}
               secureTextEntry
+              onChangeText={(text) => setPassword(text)}
             />
 
-            {/* Iniciar Sesion Button*/}
+            {/* Iniciar Sesión Button */}
             <TouchableOpacity
               className="flex h-[50px] w-[90%] bg-[#3CC4B9] rounded-full mx-auto justify-center items-center"
               onPress={handleSignIn}
@@ -133,7 +186,7 @@ const ScreenLogin = ({
               <Text className="text-[#FFFFFF] text-[16px] font-bold">{loginText}</Text>
             </TouchableOpacity>
 
-            {/* Iniciar con Google Button*/}
+            {/* Iniciar con Google Button */}
             <TouchableOpacity
               className="flex flex-row items-center justify-center h-[56px] w-[90%] bg-[#ea580b] rounded-full mx-auto"
               onPress={handleGoogleSignIn}
@@ -145,7 +198,7 @@ const ScreenLogin = ({
               </Text>
             </TouchableOpacity>
 
-            {/* Registrarse Button*/}
+            {/* Registrarse Button */}
             <TouchableOpacity
               className="flex h-[50px] w-[90%] bg-[#23C55E] rounded-full mx-auto justify-center items-center"
               onPress={() => router.push("../screens/screenRegister")}
@@ -154,14 +207,10 @@ const ScreenLogin = ({
             </TouchableOpacity>
           </View>
 
-         {/* Texto Footer*/}
+          {/* Footer Text */}
           <View className="flex items-center mt-20">
-            <Text className="text-[#3CC4B9] text-[16px] font-bold">
-              {footerText}
-            </Text>
-            <Text className="text-[#3CC4B9] text-[20px] font-bold">
-              {footerSubText}
-            </Text>
+            <Text className="text-[#3CC4B9] text-[16px] font-bold">{footerText}</Text>
+            <Text className="text-[#3CC4B9] text-[20px] font-bold">{footerSubText}</Text>
           </View>
         </Animated.View>
       </KeyboardAvoidingView>
