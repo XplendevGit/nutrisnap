@@ -22,7 +22,6 @@ import {
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 
-
 // Necesario para expo-auth-session
 WebBrowser.maybeCompleteAuthSession();
 
@@ -90,11 +89,11 @@ const ScreenLogin = ({
         <Animated.View
           className="bg-white"
           entering={FadeInDown.delay(100).springify()}
-          style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}
+          style={{ flex: 1, justifyContent: "center" }}
         >
           <StatusBar style="light" />
 
-          {/* Logo */}
+          {/* Logo NutriSnap*/}
           <View className="flex items-center mt-10 mb-6">
             <Image
               source={logoImage}
@@ -107,53 +106,62 @@ const ScreenLogin = ({
           </View>
 
           {/* Inputs y Botones */}
-          <View className="flex w-full space-y-4 items-center justify-center">
+          <View className="flex w-full space-y-2 items-center justify-center">
+
+            {/* Email Button*/}
             <TextInput
-              className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
+              className="flex h-[50px] w-[90%] bg-[#f1f1f1] rounded-full px-4"
               placeholder="Email"
               placeholderTextColor="#888"
               onChangeText={(text) => setEmail(text)}
             />
 
+            {/* Contraseña Button*/}
             <TextInput
-              className="flex h-[56px] w-[90%] bg-[#f1f1f1] rounded-full px-4 border-[1px] border-[#3CC4B9]"
+              className="flex h-[50px] w-[90%] bg-[#f1f1f1] rounded-full px-4"
               placeholder="Contraseña"
               placeholderTextColor="#888"
               onChangeText={(text) => setPassword(text)}
               secureTextEntry
             />
 
+            {/* Iniciar Sesion Button*/}
             <TouchableOpacity
-              className="flex h-[56px] w-[90%] bg-[#3CC4B9] rounded-full mx-auto justify-center items-center"
+              className="flex h-[50px] w-[90%] bg-[#3CC4B9] rounded-full mx-auto justify-center items-center"
               onPress={handleSignIn}
             >
-              <Text className="text-[#FFFFFF] text-[16px]">{loginText}</Text>
+              <Text className="text-[#FFFFFF] text-[16px] font-bold">{loginText}</Text>
             </TouchableOpacity>
 
+            {/* Iniciar con Google Button*/}
             <TouchableOpacity
-              className="flex flex-row items-center justify-center h-[56px] w-[90%] bg-[#F57C00] rounded-full mx-auto"
+              className="flex flex-row items-center justify-center h-[56px] w-[90%] bg-[#ea580b] rounded-full mx-auto"
               onPress={handleGoogleSignIn}
               disabled={!request}
             >
               <AntDesign name="google" size={24} color="#FFFFFF" />
-              <Text className="text-[#FFFFFF] text-[16px] ml-2">
+              <Text className="text-[#FFFFFF] text-[16px] font-bold ml-2">
                 Iniciar Sesión con Google
               </Text>
             </TouchableOpacity>
 
+            {/* Registrarse Button*/}
             <TouchableOpacity
-              className="flex h-[56px] w-[90%] bg-[#81C784] rounded-full mx-auto justify-center items-center"
+              className="flex h-[50px] w-[90%] bg-[#23C55E] rounded-full mx-auto justify-center items-center"
               onPress={() => router.push("../screens/screenRegister")}
             >
-              <Text className="text-[#ffffff] text-[16px]">{registerText}</Text>
+              <Text className="text-[#ffffff] text-[16px] font-bold">{registerText}</Text>
             </TouchableOpacity>
           </View>
 
+         {/* Texto Footer*/}
           <View className="flex items-center mt-20">
-            <Text style={{ fontSize: 16, color: "#3CC4B9", fontWeight: "bold" }}>
+            <Text className="text-[#3CC4B9] text-[16px] font-bold">
               {footerText}
             </Text>
-            <Text className="text-[#3CC4B9] text-[20px]">{footerSubText}</Text>
+            <Text className="text-[#3CC4B9] text-[20px] font-bold">
+              {footerSubText}
+            </Text>
           </View>
         </Animated.View>
       </KeyboardAvoidingView>
