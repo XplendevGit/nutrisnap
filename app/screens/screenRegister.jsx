@@ -11,14 +11,12 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../../firebase-config";
 import { useRouter } from "expo-router";
-import { MotiView } from "moti";
-import { WifiLoader } from "react-awesome-loaders"; // Importa el WifiLoader
 
 const ScreenRegister = () => {
   const router = useRouter();
@@ -28,20 +26,26 @@ const ScreenRegister = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [objective, setObjective] = useState("");
-  const [conditions, setConditions] = useState("");
-  const [diet, setDiet] = useState("");
-  const [activities, setActivities] = useState([]);
-  const [diseases, setDiseases] = useState("");
   const [profileImage, setProfileImage] = useState(
     "https://via.placeholder.com/150"
   );
-
-  const [isLoading, setIsLoading] = useState(false); // Estado de carga
+  const [objective, setObjective] = useState("");
+  const [age, setAge] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [gender, setGender] = useState("");
+  const [activityLevel, setActivityLevel] = useState("");
+  const [diet, setDiet] = useState("");
+  const [conditions, setConditions] = useState("");
+  const [diseases, setDiseases] = useState("");
+  const [activities, setActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Opciones
+  const genderOptions = ["Masculino", "Femenino", "Otro"];
+  const activityLevels = ["Bajo", "Moderado", "Alto"];
   const dietOptions = [
-    "Carnivoro",
+    "Carnívoro",
     "Vegetariano",
     "Vegano",
     "Pescetariano",
@@ -49,20 +53,15 @@ const ScreenRegister = () => {
     "Otro",
   ];
   const activityOptions = [
-    { name: "Yoga", icon: "meditation" },
-    { name: "Correr", icon: "run" },
-    { name: "Natación", icon: "swim" },
-    { name: "Fútbol", icon: "soccer" },
-    { name: "Ciclismo", icon: "bike" },
-    { name: "Tenis", icon: "tennis" },
-    { name: "Gimnasio", icon: "dumbbell" },
-    { name: "Voleibol", icon: "volleyball" },
-    { name: "Senderismo", icon: "hiking" },
-    { name: "Patinaje", icon: "roller-skate" },
-    { name: "Esquí", icon: "snowflake" },
+    "Yoga",
+    "Correr",
+    "Natación",
+    "Fútbol",
+    "Ciclismo",
+    "Gimnasio",
   ];
 
-  // Manejo de selección de imagen
+  // Selección de imagen
   const handleImagePick = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -76,30 +75,22 @@ const ScreenRegister = () => {
         setProfileImage(result.assets[0].uri);
       }
     } catch (error) {
-      console.error("Error al seleccionar imagen:", error.message);
-      Alert.alert("Error", "No se pudo seleccionar la imagen. Inténtalo nuevamente.");
+      Alert.alert("Error", "No se pudo seleccionar la imagen.");
     }
   };
 
-  // Creación de cuenta y guardado en Firestore
+  // Registro de usuario
   const handleCreateAccount = async () => {
-    setIsLoading(true); // Muestra el indicador al inicio
+    setIsLoading(true);
 
-    if (
-      !email.trim() ||
-      !password.trim() ||
-      !confirmPassword.trim() ||
-      !fullName.trim() ||
-      !objective.trim() ||
-      !diet
-    ) {
-      setIsLoading(false); // Oculta el indicador si hay error
+    if (!email || !password || !confirmPassword || !fullName || !age || !weight || !height || !gender || !objective) {
+      setIsLoading(false);
       Alert.alert("Error", "Todos los campos obligatorios deben ser completados.");
       return;
     }
 
     if (password !== confirmPassword) {
-      setIsLoading(false); // Oculta el indicador si hay error
+      setIsLoading(false);
       Alert.alert("Error", "Las contraseñas no coinciden.");
       return;
     }
@@ -108,41 +99,43 @@ const ScreenRegister = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      // Datos del usuario
       const userData = {
-        email: email.trim(),
-        fullName: fullName.trim(),
-        objective: objective.trim(),
-        conditions: conditions.trim() || "No especificado",
-        diet: diet || "No especificado",
-        activities: activities.length > 0 ? activities : ["No especificadas"],
-        diseases: diseases.trim() || "No especificadas",
+        email,
+        fullName,
         profileImage,
+        objective,
+        age: parseInt(age),
+        weight: parseFloat(weight),
+        height: parseFloat(height),
+        gender,
+        activityLevel,
+        diet,
+        conditions: conditions || "No especificado",
+        diseases: diseases || "No especificado",
+        activities: activities.length > 0 ? activities : ["No especificadas"],
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        premiumStatus: false,
+        usageLimits: {
+          analyzeProduct: { limit: 5, used: 0 },
+          compareProducts: { limit: 3, used: 0 },
+          customRecipes: { limit: 1, used: 0 },
+        },
+        following: [],
+        followers: [],
       };
 
+      // Guardar en Firestore
       await setDoc(doc(db, "users", user.uid), userData);
 
-      // Muestra la transición antes de redirigir
-      setTimeout(() => {
-        setIsLoading(false); // Oculta el indicador
-        router.push("../screens/screenMain");
-      }, 2000);
+      Alert.alert("Éxito", "Cuenta creada exitosamente.");
+      router.push("../screens/screenMain");
     } catch (error) {
-      setIsLoading(false); // Oculta el indicador si hay error
-      console.error("Error al registrar el usuario:", error.message);
-      Alert.alert("Error", "Error al registrar el usuario. Intenta con un correo diferente.");
+      Alert.alert("Error", "No se pudo crear la cuenta.");
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  // Manejo de selección de dieta
-  const handleSelectDiet = (option) => setDiet(option);
-
-  // Manejo de selección de actividades
-  const handleSelectActivity = (activity) => {
-    setActivities((prev) =>
-      prev.includes(activity)
-        ? prev.filter((act) => act !== activity)
-        : [...prev, activity]
-    );
   };
 
   return (
@@ -152,56 +145,125 @@ const ScreenRegister = () => {
           flexGrow: 1,
           justifyContent: "center",
           alignItems: "center",
-          paddingTop: 50,
           paddingHorizontal: 20,
+          paddingVertical: 50,
         }}
       >
         <StatusBar style="light" />
 
-        {/* Botón de regresar */}
-        <TouchableOpacity
-          onPress={() => router.push("../screens/screenMain")}
-          className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
-        >
-          <MaterialIcons name="arrow-back" size={24} color="#3CC4B9" />
-        </TouchableOpacity>
-
-        {/* Imagen de perfil */}
-        <MotiView
-          from={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", duration: 500 }}
-          className="mb-4"
-        >
-          <TouchableOpacity onPress={handleImagePick}>
-            <Image
-              source={{ uri: profileImage }}
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                marginBottom: 10,
-                borderWidth: 2,
-                borderColor: "#3CC4B9",
-              }}
-            />
-            <Text className="text-[#3CC4B9] text-center">Cambiar Imagen</Text>
-          </TouchableOpacity>
-        </MotiView>
-
-        {/* Indicador de carga */}
         {isLoading && (
-          <View className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-80">
-            <WifiLoader
-              background={"transparent"}
-              desktopSize={"150px"}
-              mobileSize={"100px"}
-              text={"Registrando..."}
-              backColor={"#3CC4B9"}
-              frontColor={"#4A90E2"}
-            />
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1,
+            }}
+          >
+            <ActivityIndicator size="large" color="#3CC4B9" />
+            <Text style={{ marginTop: 10, color: "#fff" }}>Registrando...</Text>
           </View>
         )}
+
+        {/* Imagen de perfil */}
+        <TouchableOpacity onPress={handleImagePick}>
+          <Image
+            source={{ uri: profileImage }}
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+              borderWidth: 2,
+              borderColor: "#3CC4B9",
+              marginBottom: 20,
+            }}
+          />
+          <Text style={{ color: "#3CC4B9" }}>Seleccionar Imagen</Text>
+        </TouchableOpacity>
+
+        {/* Campos del formulario */}
+        <TextInput
+          placeholder="Nombre completo"
+          value={fullName}
+          onChangeText={setFullName}
+          style={{
+            borderBottomWidth: 1,
+            borderColor: "#ccc",
+            marginBottom: 20,
+            width: "100%",
+            padding: 10,
+          }}
+        />
+        <TextInput
+          placeholder="Correo electrónico"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          style={{
+            borderBottomWidth: 1,
+            borderColor: "#ccc",
+            marginBottom: 20,
+            width: "100%",
+            padding: 10,
+          }}
+        />
+        <TextInput
+          placeholder="Edad"
+          value={age}
+          onChangeText={setAge}
+          keyboardType="numeric"
+          style={{
+            borderBottomWidth: 1,
+            borderColor: "#ccc",
+            marginBottom: 20,
+            width: "100%",
+            padding: 10,
+          }}
+        />
+        <TextInput
+          placeholder="Altura (cm)"
+          value={height}
+          onChangeText={setHeight}
+          keyboardType="numeric"
+          style={{
+            borderBottomWidth: 1,
+            borderColor: "#ccc",
+            marginBottom: 20,
+            width: "100%",
+            padding: 10,
+          }}
+        />
+        <TextInput
+          placeholder="Peso (kg)"
+          value={weight}
+          onChangeText={setWeight}
+          keyboardType="numeric"
+          style={{
+            borderBottomWidth: 1,
+            borderColor: "#ccc",
+            marginBottom: 20,
+            width: "100%",
+            padding: 10,
+          }}
+        />
+        <TouchableOpacity
+          onPress={handleCreateAccount}
+          style={{
+            backgroundColor: "#3CC4B9",
+            paddingVertical: 15,
+            borderRadius: 10,
+            width: "100%",
+            alignItems: "center",
+            marginTop: 20,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>Crear Cuenta</Text>
+        </TouchableOpacity>
       </ScrollView>
     </TouchableWithoutFeedback>
   );
