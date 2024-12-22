@@ -142,9 +142,9 @@ const ScreenRegister = () => {
       setTimeout(() => {
         handleAlertClose();
         router.push("../screens/screenMain");
-      }, 3000);
+      }, 2000);
     } catch (error) {
-      showAlert("error", "Error", "No se pudo crear la cuenta.");
+      showAlert("error", "Error", "No se pudo crear la cuenta, prueba con un Email diferente.");
     } finally {
       hideLoading();
     }
@@ -155,16 +155,16 @@ const ScreenRegister = () => {
       <View className="flex-1 bg-white">
         <ScrollView
           contentContainerStyle={{
-            paddingBottom: 50,
+            paddingBottom: 60,
           }}
-          className="px-5 py-10"
+          className="py-10 px-4"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           <StatusBar style="light" />
 
           {isLoading && (
-            <View className="absolute w-full h-full inset-0 bg-black/50 flex justify-center items-center z-50">
+            <View className="absolute w-screen h-full inset-0 bg-black/50 flex justify-center items-center z-50">
               <ActivityIndicator size="large" color="#3CC4B9" />
               <Text className="text-white text-lg mt-4">Registrando...</Text>
             </View>
@@ -180,7 +180,7 @@ const ScreenRegister = () => {
 
           <TouchableOpacity
             onPress={handleImagePick}
-            className="flex items-center mb-6"
+            className="flex items-center mb-12"
           >
             <Image
               source={{ uri: profileImage }}
@@ -193,17 +193,17 @@ const ScreenRegister = () => {
             placeholder="Nombre"
             value={fullName}
             onChangeText={setFullName}
-            className="bg-gray-100 rounded-full px-4 py-2 mb-4"
+            className="bg-gray-100 rounded-full px-4 py-2 mb-3"
           />
           <TextInput
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
-            className="bg-gray-100 rounded-full px-4 py-2 mb-4"
+            className="bg-gray-100 rounded-full px-4 py-2 mb-3"
           />
 
-          <View className="relative mb-4">
+          <View className="relative mb-3">
             <TextInput
               placeholder="Contraseña"
               value={password}
@@ -243,43 +243,57 @@ const ScreenRegister = () => {
             </TouchableOpacity>
           </View>
 
-          <Text className="text-lg font-bold text-[#3CC4B9] mb-2">Selecciona tu dieta</Text>
+          <Text className="text-xl font-bold text-[#3CC4B9] mb-4 text-center">Selecciona tu dieta</Text>
           <View className="flex flex-wrap flex-row gap-2 mb-6">
             {["Carnívoro", "Vegetariano", "Vegano", "Pescetariano", "Sin Restricciones", "Otro"].map(
               (option) => (
                 <TouchableOpacity
                   key={option}
                   onPress={() => handleSelectDiet(option)}
-                  className={`px-4 py-2 rounded-full border ${
-                    diet === option ? "bg-[#3CC4B9] text-white" : "border-gray-300"
+                  className={`px-4 py-2 rounded-full ${
+                    diet === option ? "bg-[#3CC4B9]" : "bg-gray-100"
                   }`}
                 >
-                  <Text>{option}</Text>
+                  <Text
+                    className={`${
+                      diet === option ? "text-white" : "text-black"
+                    }`}
+                  >
+                    {option}
+                  </Text>
                 </TouchableOpacity>
               )
             )}
           </View>
 
-          <Text className="text-lg font-bold text-[#3CC4B9] mb-2">Selecciona tus actividades</Text>
+
+          <Text className="text-xl font-bold text-[#3CC4B9] mb-4 text-center">Selecciona tus actividades</Text>
           <View className="flex flex-wrap flex-row gap-2 mb-6">
             {["Yoga", "Correr", "Natación", "Fútbol", "Ciclismo", "Gimnasio"].map((activity) => (
               <TouchableOpacity
                 key={activity}
                 onPress={() => handleSelectActivity(activity)}
-                className={`px-4 py-2 rounded-full border ${
-                  activities.includes(activity) ? "bg-[#3CC4B9] text-white" : "border-gray-300"
+                className={`px-4 py-2 rounded-full ${
+                  activities.includes(activity) ? "bg-[#3CC4B9]" : "bg-gray-100"
                 }`}
               >
-                <Text>{activity}</Text>
+                <Text
+                 className={`${
+                    activities.includes(activity) ? "text-white" : "text-black"
+                 }`}
+                >
+                  {activity}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
 
+
           <TouchableOpacity
             onPress={handleCreateAccount}
-            className="bg-[#3CC4B9] py-3 rounded-md"
+            className="flex h-[50px] w-[90%] bg-[#3CC4B9] rounded-full mx-auto justify-center items-center"
           >
-            <Text className="text-white font-bold text-center">Crear Cuenta</Text>
+            <Text className="text-[#FFFFFF] text-[16px] font-bold">Crear Cuenta</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
