@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { auth, db } from "../../firebase-config";
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import CustomAlert from "../../app/components/customAlert";
 
 const ScreenRegister = () => {
@@ -29,6 +30,7 @@ const ScreenRegister = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [objective, setObjective] = useState("");
   const [profileImage, setProfileImage] = useState(
     "https://via.placeholder.com/150" // Imagen por defecto
   );
@@ -56,7 +58,8 @@ const ScreenRegister = () => {
       !confirmPassword.trim() ||
       !fullName.trim() ||
       !diet.trim() ||
-      activities.length === 0
+      activities.length === 0 ||
+      !objective.trim()
     ) {
       showAlert("error", "Error", "Todos los campos obligatorios deben ser completados.");
       return false;
@@ -68,6 +71,24 @@ const ScreenRegister = () => {
     }
 
     return true;
+  };
+
+  // Iconos de Actividades
+  const activityIcons = {
+    Yoga: "self-improvement",
+    Correr: "directions-run",
+    Natación: "pool",
+    Fútbol: "sports-soccer",
+    Ciclismo: "pedal-bike",
+    Gimnasio: "fitness-center",
+    Calistenia: "fitness-center",
+    Baseball: "sports-baseball",
+    Basketball: "sports-basketball",
+    Voleibol: "sports-volleyball",
+    Senderismo: "hiking",
+    Patinaje: "roller-skating",
+    Esquí: "ac-unit",
+    Otro: "help-outline", // Ícono genérico para la opción "Otro"
   };
 
   // Selección de imagen
@@ -117,7 +138,7 @@ const ScreenRegister = () => {
         fullName,
         description: "No especificado",
         profileImage,
-        objective: "No especificado",
+        objective,
         gender: "No especificado",
         activityLevel: "No especificado",
         diseases: "No especificado",
@@ -155,7 +176,7 @@ const ScreenRegister = () => {
       <View className="flex-1 bg-white">
         <ScrollView
           contentContainerStyle={{
-            paddingBottom: 60,
+            paddingBottom: 80,
           }}
           className="py-10 px-4"
           keyboardShouldPersistTaps="handled"
@@ -163,6 +184,7 @@ const ScreenRegister = () => {
         >
           <StatusBar style="light" />
 
+        {/* CArgando Loading */}
           {isLoading && (
             <View className="absolute w-screen h-full inset-0 bg-black/50 flex justify-center items-center z-50">
               <ActivityIndicator size="large" color="#3CC4B9" />
@@ -170,6 +192,7 @@ const ScreenRegister = () => {
             </View>
           )}
 
+        {/* Custom Alert */}
           <CustomAlert
             visible={alert.visible}
             type={alert.type}
@@ -178,9 +201,18 @@ const ScreenRegister = () => {
             onClose={handleAlertClose}
           />
 
+        {/* Back Button */}
+          <TouchableOpacity
+            onPress={() => router.push("../screens/screenLogin")}
+            className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
+          >
+            <MaterialIcons name="arrow-back" size={24} color="#3CC4B9" />
+          </TouchableOpacity>
+
+        {/* Imagen Button */}
           <TouchableOpacity
             onPress={handleImagePick}
-            className="flex items-center mb-12"
+            className="flex items-center mb-6 mt-24"
           >
             <Image
               source={{ uri: profileImage }}
@@ -244,7 +276,7 @@ const ScreenRegister = () => {
           </View>
 
           <Text className="text-xl font-bold text-[#3CC4B9] mb-4 text-center">Selecciona tu dieta</Text>
-          <View className="flex flex-wrap flex-row gap-2 mb-6">
+          <View className="flex flex-wrap flex-row gap-2 mb-6 justify-center">
             {["Carnívoro", "Vegetariano", "Vegano", "Pescetariano", "Sin Restricciones", "Otro"].map(
               (option) => (
                 <TouchableOpacity
@@ -256,7 +288,7 @@ const ScreenRegister = () => {
                 >
                   <Text
                     className={`${
-                      diet === option ? "text-white" : "text-black"
+                      diet === option ? "text-white" : "text-gray-500"
                     }`}
                   >
                     {option}
@@ -266,28 +298,54 @@ const ScreenRegister = () => {
             )}
           </View>
 
-
           <Text className="text-xl font-bold text-[#3CC4B9] mb-4 text-center">Selecciona tus actividades</Text>
-          <View className="flex flex-wrap flex-row gap-2 mb-6">
-            {["Yoga", "Correr", "Natación", "Fútbol", "Ciclismo", "Gimnasio"].map((activity) => (
+          <View className="flex flex-wrap flex-row gap-2 mb-6 justify-center">
+            {[    "Yoga",
+             "Correr",
+             "Natación",
+             "Fútbol",
+             "Ciclismo",
+             "Gimnasio",
+             "Calistenia",
+             "Baseball",
+             "Basketball",
+             "Voleibol",
+             "Senderismo",
+             "Patinaje",
+             "Esquí",
+             "Otro",
+            ].map((activity) => (
               <TouchableOpacity
                 key={activity}
                 onPress={() => handleSelectActivity(activity)}
-                className={`px-4 py-2 rounded-full ${
+                className={`flex flex-row px-4 py-2 rounded-full space-x-1 space-y-[1.8px] ${
                   activities.includes(activity) ? "bg-[#3CC4B9]" : "bg-gray-100"
                 }`}
               >
-                <Text
-                 className={`${
-                    activities.includes(activity) ? "text-white" : "text-black"
-                 }`}
+
+              <Text
+                  className={`${
+                    activities.includes(activity) ? "text-white" : "text-gray-500"
+                  }`}
                 >
                   {activity}
                 </Text>
+
+              <MaterialIcons
+                 name={activityIcons[activity]} // Obtén el ícono correspondiente
+                 size={16}
+                 color={activities.includes(activity) ? "#FFFFFF" : "#3CC4B9"}
+               />
               </TouchableOpacity>
             ))}
           </View>
 
+          <TextInput
+            placeholder="Objetivo"
+            value={objective}
+            onChangeText={setObjective}
+            className="bg-gray-100 rounded-full px-4 py-2 mb-6"
+          />
 
           <TouchableOpacity
             onPress={handleCreateAccount}

@@ -75,6 +75,8 @@ const ScreenProfile = () => {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Encabezado */}
         <View className="bg-[#3CC4B9] h-48 w-full rounded-b-[12px] items-center justify-end relative">
+          
+        {/* Back Button */}
           <TouchableOpacity
             onPress={() => router.push("../screens/screenMain")}
             className="absolute top-10 left-4 bg-white p-3 rounded-full shadow-md"
@@ -82,6 +84,7 @@ const ScreenProfile = () => {
             <MaterialIcons name="arrow-back" size={24} color="#3CC4B9" />
           </TouchableOpacity>
 
+        {/* Edit User Button */}
           <TouchableOpacity
             onPress={() => router.push("../screens/screenEditUser")}
             className="absolute top-10 right-4 bg-white p-3 rounded-full shadow-md"
@@ -89,6 +92,7 @@ const ScreenProfile = () => {
             <MaterialIcons name="edit" size={24} color="#3CC4B9" />
           </TouchableOpacity>
 
+         {/* Imagen */} 
           <View className="mb-[-30px] items-center">
             <Image
               source={{ uri: userData?.profileImage || "https://via.placeholder.com/100" }}
