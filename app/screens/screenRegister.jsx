@@ -176,9 +176,9 @@ const ScreenRegister = () => {
       <View className="flex-1 bg-white">
         <ScrollView
           contentContainerStyle={{
-            paddingBottom: 80,
+            paddingBottom: 20,
           }}
-          className="py-10 px-4"
+          className=""
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -216,36 +216,40 @@ const ScreenRegister = () => {
           >
             <Image
               source={{ uri: profileImage }}
-              className="w-36 h-36 rounded-full border-2 border-[#3CC4B9]"
+              className="w-24 h-24 rounded-full border-2 border-[#3CC4B9]"
             />
             <Text className="text-[#3CC4B9] mt-2">Cambiar Imagen</Text>
           </TouchableOpacity>
 
+        {/* Nombre TextInput */}
           <TextInput
             placeholder="Nombre"
             value={fullName}
             onChangeText={setFullName}
-            className="bg-gray-100 rounded-full px-4 py-2 mb-3"
+            className="bg-gray-100 rounded-full px-4 py-2 mb-3 mx-4"
           />
+
+          {/* Email TextInput */}
           <TextInput
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
-            className="bg-gray-100 rounded-full px-4 py-2 mb-3"
+            className="bg-gray-100 rounded-full px-4 py-2 mb-3 mx-4"
           />
 
+        {/* Contraseña TextInput */}
           <View className="relative mb-3">
             <TextInput
               placeholder="Contraseña"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!passwordVisible}
-              className="bg-gray-100 rounded-full px-4 py-2 pr-10"
+              className="bg-gray-100 rounded-full px-4 py-2 pr-10 mx-4"
             />
             <TouchableOpacity
               onPress={() => setPasswordVisible(!passwordVisible)}
-              className="absolute right-4 top-3"
+              className="absolute right-4 top-3 mx-4"
             >
               <FontAwesome
                 name={passwordVisible ? "eye" : "eye-slash"}
@@ -255,17 +259,18 @@ const ScreenRegister = () => {
             </TouchableOpacity>
           </View>
 
+        {/* Confirmar Contraseña TextInput */}
           <View className="relative mb-4">
             <TextInput
               placeholder="Confirmar Contraseña"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry={!confirmPasswordVisible}
-              className="bg-gray-100 rounded-full px-4 py-2 pr-10"
+              className="bg-gray-100 rounded-full px-4 py-2 pr-10 mx-4"
             />
             <TouchableOpacity
               onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
-              className="absolute right-4 top-3"
+              className="absolute right-4 top-3 mx-4"
             >
               <FontAwesome
                 name={confirmPasswordVisible ? "eye" : "eye-slash"}
@@ -275,6 +280,18 @@ const ScreenRegister = () => {
             </TouchableOpacity>
           </View>
 
+        {/* Objetivo TextInput */}
+          <View className="relative mb-3">
+          <TextInput
+            placeholder="Objetivo"
+            value={objective}
+            onChangeText={setObjective}
+            className="bg-gray-100 rounded-full px-4 py-2 mb-6 mx-4"
+          />
+          </View>
+          
+
+        {/* Selección Dieta Section*/}
           <Text className="text-xl font-bold text-[#3CC4B9] mb-4 text-center">Selecciona tu dieta</Text>
           <View className="flex flex-wrap flex-row gap-2 mb-6 justify-center">
             {["Carnívoro", "Vegetariano", "Vegano", "Pescetariano", "Sin Restricciones", "Otro"].map(
@@ -298,6 +315,7 @@ const ScreenRegister = () => {
             )}
           </View>
 
+        {/* Actividades Section */}
           <Text className="text-xl font-bold text-[#3CC4B9] mb-4 text-center">Selecciona tus actividades</Text>
           <View className="flex flex-wrap flex-row gap-2 mb-6 justify-center">
             {[    "Yoga",
@@ -340,13 +358,7 @@ const ScreenRegister = () => {
             ))}
           </View>
 
-          <TextInput
-            placeholder="Objetivo"
-            value={objective}
-            onChangeText={setObjective}
-            className="bg-gray-100 rounded-full px-4 py-2 mb-6"
-          />
-
+        {/* Crear Cuenta Button */}
           <TouchableOpacity
             onPress={handleCreateAccount}
             className="flex h-[50px] w-[90%] bg-[#3CC4B9] rounded-full mx-auto justify-center items-center"
