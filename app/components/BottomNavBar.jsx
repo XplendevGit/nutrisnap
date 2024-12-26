@@ -127,25 +127,34 @@ const BottomNavBar = () => {
         </View>
       </TouchableOpacity>
 
-      {/* Botón Registros */}
-      <TouchableOpacity onPress={handlePaymentPress} className="flex items-center pt-[2px]">
+      {/* Botón Suscripción */}
+      <TouchableOpacity
+        onPress={handlePaymentPress}
+        style={{ alignItems: 'center', justifyContent: 'center' }}
+      >
         <View
           style={{
-            width: 30,
-            height: 30,
+            width: 30, // Ancho del contenedor
+            height: 30, // Alto del contenedor
             justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-          <Image
-            source={require('../../assets/images/garantizado.png')} // Ruta del archivo PNG
-            style={{
-              width: 40,
-              height: 38,
-            }}
-          />
+                        <LottieView 
+                          source={require('../../assets/animations/star.json')}
+                          autoPlay
+                          loop
+                          style={{
+                            position: 'flex',
+                            top: 0,
+                            right: 0,
+                            width: 55,
+                            height: 55,
+                            marginBottom: 4,
+                          }}
+                        />
         </View>
-        <Text className="pt-[1px] text-[16px] text-primary">Premium</Text>
+        <Text style={{ paddingTop: 0, fontSize: 16, color: '#3CC4B9' }}>Premium</Text>
       </TouchableOpacity>
 
       {/* Botón Mi Perfil */}
@@ -166,7 +175,7 @@ const BottomNavBar = () => {
             }}
           />
         </View>
-        <Text className="pt-[1px] text-[16px] text-primary">Perfil</Text>
+        <Text className="pt-[2px] text-[16px] text-primary">Perfil</Text>
       </TouchableOpacity>
     </MotiView>
   );
