@@ -1,12 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Alert, StyleSheet } from 'react-native';
 import { MotiView } from 'moti';
 import LottieView from 'lottie-react-native';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import BarcodeScanner from './BarcodeScanner';
+import { fetchProductByBarcode } from '../../api/OpenFoodFactsScanBar';
 
 const BottomNavBar = () => {
   const router = useRouter();
+  const [isScannerActive, setIsScannerActive] = useState(false); // Estado para activar/desactivar el escáner
 
   const handleProfilePress = () => {
     router.push('../screens/screenProfile');
@@ -24,33 +28,10 @@ const BottomNavBar = () => {
     router.push('../screens/screenPayment');
   };
 
-  const handleScanPress = async () => {
-    // Solicitar permisos de la cámara
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (!permissionResult.granted) {
-      Alert.alert(
-        "Permiso requerido",
-        "Se necesita acceso a la cámara para usar esta funcionalidad."
-      );
-      return;
-    }
-
-    // Abrir la cámara
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      // Navegar a la pantalla de resultados con la imagen capturada
-      router.push({
-        pathname: '../screens/screenResult', // Ruta de la pantalla de resultados
-        params: { imageUri: result.assets[0].uri }, // Pasar la imagen capturada
-      });
-    }
+  const handleScanPress = () => {
+    router.push('../screens/screenScan'); // Redirige a la pantalla de escaneo
   };
+
 
   return (
     <MotiView
@@ -177,8 +158,74 @@ const BottomNavBar = () => {
         </View>
         <Text className="pt-[2px] text-[16px] text-primary">Perfil</Text>
       </TouchableOpacity>
+
+            {/* Muestra el escáner si está activo */}
+            {isScannerActive && (
+        <View style={styles.scannerContainer}>
+          <BarcodeScanner onBarcodeScanned={handleBarcodeScanned} />
+        </View>
+      )}
+
     </MotiView>
   );
 };
 
 export default BottomNavBar;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000",
+  },
+  text: {
+    color: "#fff",
+    fontSize: 18,
+  },
+  cameraContainer: {
+    flex: 1,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  navBar: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    backgroundColor: "white",
+    padding: 16,
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  navButton: {
+    padding: 10,
+    backgroundColor: "#007bff",
+    borderRadius: 5,
+  },
+  navButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  scannerContainer: {
+    flex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});
+
