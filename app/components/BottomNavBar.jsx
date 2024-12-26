@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, Alert, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Alert, StyleSheet, ActivityIndicator } from 'react-native';
 import { MotiView } from 'moti';
 import LottieView from 'lottie-react-native';
 import { useRouter } from 'expo-router';
@@ -11,6 +11,7 @@ import { fetchProductByBarcode } from '../../api/OpenFoodFactsScanBar';
 const BottomNavBar = () => {
   const router = useRouter();
   const [isScannerActive, setIsScannerActive] = useState(false); // Estado para activar/desactivar el escáner
+  const [loading, setLoading] = useState(false); // Estado de carga
 
   const handleProfilePress = () => {
     router.push('../screens/screenProfile');
@@ -29,7 +30,8 @@ const BottomNavBar = () => {
   };
 
   const handleScanPress = async () => {
-    setIsScannerActive(true); // Activa el estado de escaneo
+    setLoading(true); // Activa el estado de carga
+    setIsScannerActive(true); // Activa el estado del escáner
     const testBarcode = "7802215121265"; // Código de prueba
 
     try {
@@ -45,7 +47,8 @@ const BottomNavBar = () => {
     } catch (error) {
       Alert.alert("Error", "Hubo un problema al buscar el producto. Inténtalo de nuevo.");
     } finally {
-      setIsScannerActive(false); // Finaliza el estado de escaneo
+      setLoading(false); // Finaliza el estado de carga
+      setIsScannerActive(false); // Finaliza el estado del escáner
     }
   };
 
@@ -57,6 +60,14 @@ const BottomNavBar = () => {
       transition={{ type: 'timing', duration: 500 }}
       className="absolute bottom-0 w-full bg-white shadow-md rounded-t-xl flex-row justify-between px-6 py-4"
     >
+
+                  {/* Loading Overlay */}
+            {loading && (
+        <View className="absolute z-50 w-screen h-screen bg-black/50">
+          <ActivityIndicator size="large" color="#3CC4B9" />
+          <Text className="text-lg text-white">Escaneando...</Text>
+        </View>
+      )}
       {/* Botón Animado (Lottie) */}
       <TouchableOpacity
         onPress={handleNewsPress}
@@ -175,18 +186,6 @@ const BottomNavBar = () => {
         </View>
         <Text className="pt-[2px] text-[16px] text-primary">Perfil</Text>
       </TouchableOpacity>
-
-            {/* Muestra el escáner si está activo */}
-            {isScannerActive && (
-    <View className="absolute bottom-0 w-full bg-white shadow-md flex-row justify-around py-4 px-6">
-      <TouchableOpacity onPress={handleScanPress} disabled={isScannerActive}>
-        <Text style={styles.navButtonText}>
-          {isScannerActive ? "Escaneando..." : "Escanear"}
-        </Text>
-      </TouchableOpacity>
-  </View>
-      )}
-
     </MotiView>
   );
 };
