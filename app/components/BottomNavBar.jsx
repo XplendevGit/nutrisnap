@@ -28,8 +28,25 @@ const BottomNavBar = () => {
     router.push('../screens/screenPayment');
   };
 
-  const handleScanPress = () => {
-    router.push('../screens/screenScan'); // Redirige a la pantalla de escaneo
+  const handleScanPress = async () => {
+    setIsScannerActive(true); // Activa el estado de escaneo
+    const testBarcode = "7802215121265"; // Código de prueba
+
+    try {
+      const response = await fetchProductByBarcode(testBarcode);
+      if (response.status === 1) {
+        router.push({
+          pathname: "../screens/results/ScreenResultScan",
+          params: { productCode: testBarcode }, // Envía el código de barras
+        });
+      } else {
+        Alert.alert("Producto no encontrado", "No se encontraron datos para este código.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Hubo un problema al buscar el producto. Inténtalo de nuevo.");
+    } finally {
+      setIsScannerActive(false); // Finaliza el estado de escaneo
+    }
   };
 
 
@@ -161,9 +178,13 @@ const BottomNavBar = () => {
 
             {/* Muestra el escáner si está activo */}
             {isScannerActive && (
-        <View style={styles.scannerContainer}>
-          <BarcodeScanner onBarcodeScanned={handleBarcodeScanned} />
-        </View>
+    <View className="absolute bottom-0 w-full bg-white shadow-md flex-row justify-around py-4 px-6">
+      <TouchableOpacity onPress={handleScanPress} disabled={isScannerActive}>
+        <Text style={styles.navButtonText}>
+          {isScannerActive ? "Escaneando..." : "Escanear"}
+        </Text>
+      </TouchableOpacity>
+  </View>
       )}
 
     </MotiView>
@@ -173,34 +194,6 @@ const BottomNavBar = () => {
 export default BottomNavBar;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#000",
-  },
-  text: {
-    color: "#fff",
-    fontSize: 18,
-  },
-  cameraContainer: {
-    flex: 1,
-  },
-  buttonContainer: {
-    position: "absolute",
-    bottom: 20,
-    width: "100%",
-    alignItems: "center",
-  },
-  button: {
-    backgroundColor: "#007bff",
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
   navBar: {
     position: "absolute",
     bottom: 0,
@@ -210,22 +203,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
   },
-  navButton: {
-    padding: 10,
-    backgroundColor: "#007bff",
-    borderRadius: 5,
-  },
   navButtonText: {
-    color: "#fff",
+    color: "#007bff",
     fontSize: 16,
   },
-  scannerContainer: {
-    flex: 1,
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
 });
-
