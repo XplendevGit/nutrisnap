@@ -83,7 +83,7 @@ const BottomNavBar = () => {
             }}
           />
         </View>
-        <Text className="text-[16px] text-[#3CC4B9]">News</Text>
+        <Text className="text-[16px] text-primary">News</Text>
       </TouchableOpacity>
 
       {/* Botón Escanear */}
@@ -108,7 +108,7 @@ const BottomNavBar = () => {
             }}
           />
         </View>
-        <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Scan</Text>
+        <Text className="pt-[1px] text-[16px] text-primary">Scan</Text>
       </TouchableOpacity>
 
       {/* Botón Central (Logo1) */}
@@ -117,7 +117,7 @@ const BottomNavBar = () => {
         className="relative flex items-center"
       >
         <View
-          className="rounded-full bg-[#3CC4B9] flex flex-row items-center justify-center shadow-lg"
+          className="rounded-full bg-primary flex flex-row items-center justify-center shadow-lg"
           style={{ width: 60, height: 60 }}
         >
           <Image
@@ -138,14 +138,14 @@ const BottomNavBar = () => {
           }}
         >
           <Image
-            source={require('../../assets/images/registro.png')} // Ruta del archivo PNG
+            source={require('../../assets/images/garantizado.png')} // Ruta del archivo PNG
             style={{
-              width: 38,
+              width: 40,
               height: 38,
             }}
           />
         </View>
-        <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Registro</Text>
+        <Text className="pt-[1px] text-[16px] text-primary">Premium</Text>
       </TouchableOpacity>
 
       {/* Botón Mi Perfil */}
@@ -159,14 +159,14 @@ const BottomNavBar = () => {
           }}
         >
           <Image
-            source={require('../../assets/images/perfil.png')} // Ruta del archivo PNG
+            source={require('../../assets/images/profile.png')} // Ruta del archivo PNG
             style={{
-              width: 32,
-              height: 32,
+              width: 40,
+              height: 38,
             }}
           />
         </View>
-        <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Perfil</Text>
+        <Text className="pt-[1px] text-[16px] text-primary">Perfil</Text>
       </TouchableOpacity>
     </MotiView>
   );

@@ -180,7 +180,7 @@ const ScreenLogin = ({
 
             {/* Iniciar Sesión Button */}
             <TouchableOpacity
-              className="flex h-[50px] w-[90%] bg-[#3CC4B9] rounded-full mx-auto justify-center items-center"
+              className="flex h-[50px] w-[90%] bg-primary rounded-full mx-auto justify-center items-center"
               onPress={handleSignIn}
             >
               <Text className="text-[#FFFFFF] text-[16px] font-bold">{loginText}</Text>
@@ -188,7 +188,7 @@ const ScreenLogin = ({
 
             {/* Iniciar con Google Button */}
             <TouchableOpacity
-              className="flex flex-row items-center justify-center h-[56px] w-[90%] bg-[#ea580b] rounded-full mx-auto"
+              className="flex flex-row items-center justify-center h-[56px] w-[90%] bg-secondary-2 rounded-full mx-auto"
               onPress={handleGoogleSignIn}
               disabled={!request}
             >
@@ -200,7 +200,7 @@ const ScreenLogin = ({
 
             {/* Registrarse Button */}
             <TouchableOpacity
-              className="flex h-[50px] w-[90%] bg-[#23C55E] rounded-full mx-auto justify-center items-center"
+              className="flex h-[50px] w-[90%] bg-secondary-1 rounded-full mx-auto justify-center items-center"
               onPress={() => router.push("../screens/screenRegister")}
             >
               <Text className="text-[#ffffff] text-[16px] font-bold">{registerText}</Text>
@@ -209,8 +209,8 @@ const ScreenLogin = ({
 
           {/* Footer Text */}
           <View className="flex items-center mt-20">
-            <Text className="text-[#3CC4B9] text-[16px] font-bold">{footerText}</Text>
-            <Text className="text-[#3CC4B9] text-[20px] font-bold">{footerSubText}</Text>
+            <Text className="text-primary text-[16px] font-bold">{footerText}</Text>
+            <Text className="text-primary text-[20px] font-bold">{footerSubText}</Text>
           </View>
         </Animated.View>
       </KeyboardAvoidingView>
