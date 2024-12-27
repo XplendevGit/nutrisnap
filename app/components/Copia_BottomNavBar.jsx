@@ -4,7 +4,9 @@ import { MotiView } from 'moti';
 import LottieView from 'lottie-react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import BarcodeScannerReact from './BarcodeScannerReact';
+import { fetchProductByBarcode } from '../../api/OpenFoodFactsScanBar';
 
 const BottomNavBar = () => {
   const router = useRouter();
@@ -27,8 +29,27 @@ const BottomNavBar = () => {
     router.push('../screens/screenPayment');
   };
 
-  const handleScanPress = () => {
-    router.push("../screens/screenScan"); // Navega a la pantalla de escaneo
+  const handleScanPress = async () => {
+    setLoading(true); // Activa el estado de carga
+    setIsScannerActive(true); // Activa el estado del escáner
+    const testBarcode = "7802215121265"; // Código de prueba
+
+    try {
+      const response = await fetchProductByBarcode(testBarcode);
+      if (response.status === 1) {
+        router.push({
+          pathname: "../screens/results/ScreenResultScan",
+          params: { productCode: testBarcode }, // Envía el código de barras
+        });
+      } else {
+        Alert.alert("Producto no encontrado", "No se encontraron datos para este código.");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Hubo un problema al buscar el producto. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false); // Finaliza el estado de carga
+      setIsScannerActive(false); // Finaliza el estado del escáner
+    }
   };
 
 
@@ -40,6 +61,13 @@ const BottomNavBar = () => {
       className="absolute bottom-0 w-full bg-white shadow-md rounded-t-xl flex-row justify-between px-6 py-4"
     >
 
+                  {/* Loading Overlay */}
+            {loading && (
+        <View className="absolute z-50 w-screen h-screen bg-black/50">
+          <ActivityIndicator size="large" color="#3CC4B9" />
+          <Text className="text-lg text-white">Escaneando...</Text>
+        </View>
+      )}
       {/* Botón Animado (Lottie) */}
       <TouchableOpacity
         onPress={handleNewsPress}
