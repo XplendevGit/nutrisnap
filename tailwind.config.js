@@ -14,6 +14,14 @@ module.exports = {
         body: ["Nunito"],
       },
     },
+    extend: {
+      elevation: {
+        1: '1',
+        2: '2',
+        4: '4',
+        8: '8',
+      },
+    },
   },
   plugins: [],
 }
