@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { OPENFOODFACTS_API_URL, EDAMAM_APP_ID, EDAMAM_APP_KEY, EDAMAM_API_URL, USDA_API_KEY, USDA_API_URL } from '@env';
 
 /**
  * Función para consultar la API de OpenFoodFacts.
@@ -7,6 +6,10 @@ import { OPENFOODFACTS_API_URL, EDAMAM_APP_ID, EDAMAM_APP_KEY, EDAMAM_API_URL, U
  * @returns {Object|null} - Retorna el objeto del producto si se encuentra, de lo contrario, retorna null.
  */
 const openFoodFactsAPI = async (barcode) => {
+
+  const OPENFOODFACTS_API_URL = "https://world.openfoodfacts.org/api/v0"
+
+
   const url = `${OPENFOODFACTS_API_URL}/product/${barcode}.json`;
   try {
     const response = await axios.get(url);
@@ -23,6 +26,12 @@ const openFoodFactsAPI = async (barcode) => {
  * @returns {Object|null} - Retorna el objeto del producto si se encuentra, de lo contrario, retorna null.
  */
 const edamamAPI = async (barcode) => {
+
+  const EDAMAM_APP_ID = "3d49b0d7"
+  const EDAMAM_APP_KEY = "637b812831d48004d71f00b94b713d28"
+  const EDAMAM_API_URL = "https://api.edamam.com/api/food-database/v2/parser"
+
+
   const url = `${EDAMAM_API_URL}?upc=${barcode}&app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
   try {
     const response = await axios.get(url);
@@ -39,6 +48,10 @@ const edamamAPI = async (barcode) => {
  * @returns {Object|null} - Retorna el objeto del producto si se encuentra, de lo contrario, retorna null.
  */
 const usdaAPI = async (barcode) => {
+  const USDA_API_KEY ="xizClJ3rTd4424gMM9wf9xFTPtA8BiJzXb7Sfomf"
+  const USDA_API_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
+
+
   const url = `${USDA_API_URL}?query=${barcode}&api_key=${USDA_API_KEY}`;
   try {
     const response = await axios.get(url);
