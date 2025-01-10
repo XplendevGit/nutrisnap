@@ -64,7 +64,7 @@ const BottomNavBar = () => {
             }}
           />
         </View>
-        <Text className="text-[16px] text-primary">News</Text>
+        <Text className="text-[16px] text-[#3CC4B9]">News</Text>
       </TouchableOpacity>
 
       {/* Botón Escanear */}
@@ -89,7 +89,7 @@ const BottomNavBar = () => {
             }}
           />
         </View>
-        <Text className="pt-[1px] text-[16px] text-primary">Scan</Text>
+        <Text className="pt-[1px] text-[16px] text-[#3CC4B9]">Scan</Text>
       </TouchableOpacity>
 
       {/* Botón Central (Logo1) */}
@@ -98,7 +98,7 @@ const BottomNavBar = () => {
         className="relative flex items-center"
       >
         <View
-          className="rounded-full bg-primary flex flex-row items-center justify-center shadow-lg"
+          className="rounded-full bg-[#3CC4B9] flex flex-row items-center justify-center shadow-lg"
           style={{ width: 60, height: 60 }}
         >
           <Image
@@ -156,7 +156,7 @@ const BottomNavBar = () => {
             }}
           />
         </View>
-        <Text className="pt-[2px] text-[16px] text-primary">Perfil</Text>
+        <Text className="pt-[2px] text-[16px] text-[#3CC4B9]">Perfil</Text>
       </TouchableOpacity>
     </MotiView>
   );
