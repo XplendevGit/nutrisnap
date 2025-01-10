@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Alert, StyleSheet } from "react-native";
+import { View, Text, Alert, StyleSheet, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useRouter } from "expo-router";
 
-const Screenscan = () => {
+const ScreenScan = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const router = useRouter();
@@ -37,33 +37,44 @@ const Screenscan = () => {
 
   if (hasPermission === null) {
     return (
-      <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white">Solicitando permiso para la cámara...</Text>
+      <View style={styles.container}>
+        <Text style={styles.text}>Solicitando permiso para la cámara...</Text>
       </View>
     );
   }
 
   if (hasPermission === false) {
     return (
-      <View className="flex-1 justify-center items-center bg-black">
-        <Text className="text-white">No se concedió acceso a la cámara.</Text>
+      <View style={styles.container}>
+        <Text style={styles.text}>No se concedió acceso a la cámara.</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-black">
+    <View style={styles.container}>
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
       {scanned && (
-        <View className="absolute bottom-10 w-full items-center">
-          <Text className="text-white text-lg">Procesando...</Text>
-        </View>
+        <Button title="Escanear de nuevo" onPress={() => setScanned(false)} />
       )}
     </View>
   );
 };
 
-export default Screenscan;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000",
+  },
+  text: {
+    color: "#fff",
+    fontSize: 18,
+  },
+});
+
+export default ScreenScan;
