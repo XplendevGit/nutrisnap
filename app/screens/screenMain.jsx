@@ -14,10 +14,12 @@ import LottieView from 'lottie-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import BottomNavBar from '../components/BottomNavBar';
 import { useRouter } from 'expo-router';
+import CustomAlert from '../components/customAlert'; // Asegúrate de ajustar la ruta si es diferente
 
 const ScreenMain = () => {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
+  const [alertVisible, setAlertVisible] = useState(false); // Estado para controlar el CustomAlert
   const [containerImages, setContainerImages] = useState({
     0: null,
     1: null,
@@ -31,8 +33,8 @@ const ScreenMain = () => {
       backgroundColor: '#3CC4B9',
       title: 'Analizar Producto',
       subtitle: '',
-      icon: 'search-outline', // Ionicons
-      isPremium: false, // Identifica como Premium
+      icon: 'search-outline',
+      isPremium: false,
       onPress: () => handleImageUpload(0),
     },
     {
@@ -40,8 +42,8 @@ const ScreenMain = () => {
       backgroundColor: '#FF5722',
       title: 'Comparar Productos',
       subtitle: '0 Productos',
-      icon: 'swap-horizontal-outline', // Ionicons
-      isPremium: false, // Identifica como Premium
+      icon: 'swap-horizontal-outline',
+      isPremium: true,
       onPress: () => router.push('../screens/screenCompareFood'),
     },
     {
@@ -49,8 +51,8 @@ const ScreenMain = () => {
       backgroundColor: '#FFC107',
       title: 'Recetas Personalizadas',
       subtitle: '',
-      icon: 'book-outline', // Ionicons
-      isPremium: false, // Identifica como Premium
+      icon: 'book-outline',
+      isPremium: true,
       onPress: () => router.push('../screens/screenRecipes'),
     },
     {
@@ -58,8 +60,8 @@ const ScreenMain = () => {
       backgroundColor: '#3F51B5',
       title: 'Planes Nutricionales',
       subtitle: '',
-      icon: 'heart-outline', // Ionicons
-      isPremium: true, // Identifica como Premium
+      icon: 'heart-outline',
+      isPremium: true,
       onPress: () => router.push('../screens/screenNutritionPlans'),
     },
   ];
@@ -106,6 +108,14 @@ const ScreenMain = () => {
     ]);
   };
 
+  const handlePress = (config) => {
+    if (config.isPremium) {
+      setAlertVisible(true); // Muestra el CustomAlert si es premium
+    } else {
+      config.onPress(); // Ejecuta la acción normal si no es premium
+    }
+  };
+
   return (
     <View className="flex-1 bg-[#F5F7FA] relative">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="flex-1">
@@ -116,7 +126,7 @@ const ScreenMain = () => {
           className="px-4 pt-12"
         >
           {/* Título y buscador */}
-          <Text className="text-lg text-gray-800 font-semibold">Hora de Snap!</Text>
+          <Text className="text-lg text-gray-800 font-semibold">¡Hora de Snap!</Text>
           <Text className="text-2xl font-bold text-gray-900 mt-2">¿Qué Alimento Buscas?</Text>
           <View className="flex-row items-center mt-4 bg-white rounded-lg shadow-md p-4">
             <Ionicons name="search" size={20} color="#3CC4B9" />
@@ -126,7 +136,7 @@ const ScreenMain = () => {
               onChangeText={setSearchTerm}
               className="flex-1 ml-2 text-gray-700"
             />
-            <TouchableOpacity onPress={() => Alert.alert('Search', `Searching for: ${searchTerm}`)}>
+            <TouchableOpacity onPress={() => Alert.alert('Search', `Buscando: ${searchTerm}`)}>
               <Ionicons name="send" size={20} color="#3CC4B9" />
             </TouchableOpacity>
           </View>
@@ -137,7 +147,7 @@ const ScreenMain = () => {
               {containerConfigs.map((config) => (
                 <TouchableOpacity
                   key={config.id}
-                  onPress={config.onPress}
+                  onPress={() => handlePress(config)}
                   className="w-[48%] aspect-square bg-white rounded-lg shadow-md p-4 mb-4"
                   style={{ backgroundColor: config.backgroundColor }}
                 >
@@ -156,7 +166,6 @@ const ScreenMain = () => {
                         color="white"
                         className="absolute bottom-4 right-4"
                       />
-                      {/* Estrella Premium para contenedores premium */}
                       {config.isPremium && (
                         <LottieView
                           source={require('../../assets/animations/star.json')}
@@ -180,15 +189,12 @@ const ScreenMain = () => {
 
           {/* Botón animado */}
           <View className="mt-4 items-center">
-            <TouchableOpacity onPress={() => Alert.alert('Action', 'Performing additional action!')} className="w-20 h-20">
+            <TouchableOpacity onPress={() => Alert.alert('Acción', '¡Realizando acción adicional!')} className="w-20 h-20">
               <LottieView
                 source={require('../../assets/animations/dados_animation_lottie.json')}
                 autoPlay
                 loop
-                style={{
-                  width: 80,
-                  height: 80,
-                }}
+                style={{ width: 80, height: 80 }}
               />
             </TouchableOpacity>
           </View>
@@ -197,6 +203,15 @@ const ScreenMain = () => {
 
       {/* Footer NavBar */}
       <BottomNavBar />
+
+      {/* Custom Alert para Premium */}
+      <CustomAlert
+        visible={alertVisible}
+        type="error"
+        title="Funcionalidad Premium"
+        message="Esta funcionalidad está disponible solo para usuarios premium."
+        onClose={() => setAlertVisible(false)}
+      />
     </View>
   );
 };
