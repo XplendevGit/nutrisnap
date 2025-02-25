@@ -187,16 +187,18 @@ const ScreenLogin = ({
             </TouchableOpacity>
 
             {/* Iniciar con Google Button */}
-            <TouchableOpacity
-              className="flex flex-row items-center justify-center h-[56px] w-[90%] bg-[#ea580b] rounded-full mx-auto"
-              onPress={handleGoogleSignIn}
-              disabled={!request}
-            >
-              <AntDesign name="google" size={24} color="#FFFFFF" />
-              <Text className="text-[#FFFFFF] text-[16px] font-bold ml-2">
-                Iniciar Sesión con Google
-              </Text>
-            </TouchableOpacity>
+{/*
+<TouchableOpacity
+  className="flex flex-row items-center justify-center h-[56px] w-[90%] bg-[#ea580c] rounded-full mx-auto"
+  onPress={handleGoogleSignIn}
+  disabled={!request}
+>
+  <AntDesign name="google" size={24} color="#FFFFFF" />
+  <Text className="text-[#FFFFFF] text-[16px] font-bold ml-2">
+    Iniciar Sesión con Google
+  </Text>
+</TouchableOpacity>
+*/}
 
             {/* Registrarse Button */}
             <TouchableOpacity

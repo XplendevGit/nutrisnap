@@ -5,7 +5,7 @@ import fetchProductData from "../../../api/fetchProductData";
 
 const ScreenResultScan = () => {
   const router = useRouter();
-  const productCode = router.query?.productCode;
+  const { productCode } = router.query || {};
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,7 +19,6 @@ const ScreenResultScan = () => {
 
       try {
         const data = await fetchProductData(productCode);
-        console.log("Datos del producto:", data);
         setProductData(data);
       } catch (error) {
         console.error("Error al obtener datos del producto:", error.message);
@@ -28,14 +27,7 @@ const ScreenResultScan = () => {
       }
     };
 
-    const timeout = setTimeout(() => {
-      console.warn("El tiempo de espera de la API ha expirado");
-      setLoading(false);
-    }, 10000);
-
     fetchProduct();
-
-    return () => clearTimeout(timeout);
   }, [productCode]);
 
   if (loading) {
