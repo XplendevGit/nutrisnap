@@ -136,9 +136,17 @@ const ScreenMain = () => {
               onChangeText={setSearchTerm}
               className="flex-1 ml-2 text-gray-700"
             />
-            <TouchableOpacity onPress={() => Alert.alert('Search', `Buscando: ${searchTerm}`)}>
-              <Ionicons name="send" size={20} color="#3CC4B9" />
-            </TouchableOpacity>
+       <TouchableOpacity
+         onPress={() => {
+           if (searchTerm.trim() === '') {
+            Alert.alert('Error', 'Por favor ingresa un término de búsqueda.');
+           } else {
+             router.push({ pathname: './results/ScreenSearchResults', params: {   searchTerm } });
+           }
+         }}
+        >
+        <Ionicons name="send" size={20} color="#3CC4B9" />
+   </TouchableOpacity>
           </View>
 
           {/* Contenedores dinámicos */}

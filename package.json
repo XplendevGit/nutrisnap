@@ -56,7 +56,8 @@
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.10",
-    "rn-emoji-keyboard": "^1.7.0"
+    "rn-emoji-keyboard": "^1.7.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

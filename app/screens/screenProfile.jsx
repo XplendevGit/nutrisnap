@@ -47,7 +47,7 @@ const ScreenProfile = () => {
           }
         } else {
           Alert.alert("Error", "No estás autenticado.");
-          router.push("../screens/screenLogin");
+          router.replace("../screens/screenLogin");
         }
       } catch (error) {
         console.error("Error al cargar datos del usuario:", error.message);

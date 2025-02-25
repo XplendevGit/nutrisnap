@@ -80,7 +80,7 @@ const ScreenLogin = ({
   
     setTimeout(() => {
       // Redirigir directamente después de 3 segundos
-      router.push("../screens/screenMain");
+      router.replace("../screens/screenMain");
       setAlert({ visible: false });
     }, 2000);
   };
@@ -89,7 +89,7 @@ const ScreenLogin = ({
     setAlert({ visible: false });
     // Redirigir si es un éxito
     if (alert.type === "success") {
-      router.push("../screens/screenMain");
+      router.replace("../screens/screenMain");
     }
   };
   
