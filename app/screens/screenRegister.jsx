@@ -10,6 +10,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import axios from "axios";
 import { StatusBar } from "expo-status-bar";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
@@ -57,8 +58,6 @@ const ScreenRegister = () => {
       !password.trim() ||
       !confirmPassword.trim() ||
       !fullName.trim() ||
-      !diet.trim() ||
-      activities.length === 0 ||
       !objective.trim()
     ) {
       showAlert("error", "Error", "Todos los campos obligatorios deben ser completados.");
@@ -131,20 +130,26 @@ const ScreenRegister = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      // 📤 Subir imagen a ImgBB solo si el usuario seleccionó una diferente a la por defecto
+      const uploadedImageUrl =
+        profileImage !== "https://via.placeholder.com/150"
+          ? await uploadImageToImgBB(profileImage)
+          : "https://via.placeholder.com/150";
+
       // Datos del usuario
       const userData = {
         user_ID: user.uid,
         email,
         fullName,
         description: "No especificado",
-        profileImage,
+        profileImage: uploadedImageUrl, // ✅ Imagen subida o la de por defecto
         objective,
         gender: "No especificado",
         activityLevel: "No especificado",
         diseases: "No especificado",
         conditions: "No especificado",
-        diet,
-        activities,
+        diet: diet || "No especificado", // Si no se selecciona dieta, se asigna "No especificado"
+        activities: activities.length > 0 ? activities : ["No especificado"], // Si no hay actividades, se asigna
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         premiumStatus: false,
@@ -157,6 +162,7 @@ const ScreenRegister = () => {
         followers: [],
       };
 
+
       await setDoc(doc(db, "users", user.uid), userData);
 
       showAlert("success", "¡Éxito!", "Cuenta creada exitosamente.");
@@ -168,6 +174,42 @@ const ScreenRegister = () => {
       showAlert("error", "Error", "No se pudo crear la cuenta, prueba con un Email diferente.");
     } finally {
       hideLoading();
+    }
+  };
+
+
+  // 📤 Subir imagen a ImgBB
+  const uploadImageToImgBB = async (imageUri) => {
+    const apiKey = "1a6c799783a8f073d11576343f1d0fbb"; // ✅ Tu API Key de ImgBB
+    const formData = new FormData();
+  
+    // Ajuste para React Native: uso de blob para que axios lo reconozca correctamente
+    formData.append("image", {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: "profile.jpg",
+    });
+  
+    try {
+      const response = await axios({
+        method: "post",
+        url: `https://api.imgbb.com/1/upload?key=${apiKey}`,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      if (response.data.success) {
+        console.log("✅ Imagen subida con éxito:", response.data.data.url);
+        return response.data.data.url; // URL de la imagen subida
+      } else {
+        console.error("❌ Error en la carga de ImgBB:", response.data);
+        return "https://via.placeholder.com/150"; // Imagen por defecto si falla
+      }
+    } catch (error) {
+      console.error("❌ Error al subir imagen:", error.response?.data || error.message);
+      return "https://via.placeholder.com/150"; // Imagen por defecto en caso de error
     }
   };
 

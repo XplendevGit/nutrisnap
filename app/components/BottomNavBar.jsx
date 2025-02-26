@@ -16,11 +16,11 @@ const BottomNavBar = () => {
   };
 
   const handleMainPress = () => {
-    router.push('../screens/screenMain');
+    router.replace('../screens/screenMain');
   };
 
   const handleNewsPress = () => {
-    router.push('../screens/screenPosts');
+    router.replace('../screens/screenPosts');
   };
 
   const handlePaymentPress = () => {

@@ -112,7 +112,7 @@ const ScreenProfile = () => {
             {userData?.fullName || "Usuario"}
           </Text>
           <Text className="text-center text-sm text-gray-500">
-            @{userData?.email || "email@example.com"}
+            {userData?.email || "email@example.com"}
           </Text>
 
           {/* About */}
