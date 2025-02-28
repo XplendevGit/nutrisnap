@@ -13,10 +13,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { MotiView } from "moti";
+import { ActivityIndicator } from "react-native";
 
 const ScreenProfile = () => {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga
+
 
   // Iconos para actividades
   const activityIcons = {
@@ -36,12 +39,18 @@ const ScreenProfile = () => {
   // Cargar datos del usuario desde Firestore
   useEffect(() => {
     const fetchUserData = async () => {
+      // Si ya hay datos, no volver a cargarlos
+      if (userData) {
+        setIsLoading(false); 
+        return;
+      }
+  
       try {
         const user = auth.currentUser;
         if (user) {
           const userDoc = await getDoc(doc(db, "users", user.uid));
           if (userDoc.exists()) {
-            setUserData(userDoc.data());
+            setUserData(userDoc.data()); // Guardar datos en el estado
           } else {
             Alert.alert("Error", "No se encontraron datos del usuario.");
           }
@@ -52,9 +61,11 @@ const ScreenProfile = () => {
       } catch (error) {
         console.error("Error al cargar datos del usuario:", error.message);
         Alert.alert("Error", "Hubo un problema al cargar tu perfil.");
+      } finally {
+        setIsLoading(false); // Ocultar cargador al terminar la consulta
       }
     };
-
+  
     fetchUserData();
   }, []);
 
@@ -69,6 +80,16 @@ const ScreenProfile = () => {
       Alert.alert("Error", "No se pudo cerrar sesión. Intenta nuevamente.");
     }
   };
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="#3CC4B9" />
+        <Text className="mt-4 text-gray-600">Cargando perfil...</Text>
+      </View>
+    );
+  }
+  
 
   return (
     <View className="flex-1 bg-white/40">
