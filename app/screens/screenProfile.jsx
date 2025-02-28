@@ -14,27 +14,12 @@ import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { MotiView } from "moti";
 import { ActivityIndicator } from "react-native";
+import activityService from "../services/ActivityService";
 
 const ScreenProfile = () => {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga
-
-
-  // Iconos para actividades
-  const activityIcons = {
-    Yoga: "self-improvement",
-    Correr: "directions-run",
-    Natación: "pool",
-    Fútbol: "sports-soccer",
-    Ciclismo: "pedal-bike",
-    Tenis: "sports-tennis",
-    Gimnasio: "fitness-center",
-    Voleibol: "sports-volleyball",
-    Senderismo: "hiking",
-    Patinaje: "roller-skating",
-    Esquí: "ac-unit",
-  };
 
   // Cargar datos del usuario desde Firestore
   useEffect(() => {
@@ -162,9 +147,10 @@ const ScreenProfile = () => {
                   className="bg-gray-100 rounded-full px-4 py-2 mr-2 mb-2 flex-row items-center border-[1px] border-[#3CC4B9]"
                 >
                   <MaterialIcons
-                    name={activityIcons[activity] || "check"}
+                    name={activityService.getActivityIcon(activity)}
                     size={16}
                     color="#3CC4B9"
+                    
                   />
                   <Text className="ml-2 text-sm text-gray-600">{activity}</Text>
                 </View>

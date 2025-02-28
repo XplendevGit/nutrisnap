@@ -19,7 +19,9 @@ import { auth, db } from "../../firebase-config";
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+
 import CustomAlert from "../../app/components/customAlert";
+import activityService from "../services/ActivityService";
 
 const ScreenRegister = () => {
   const router = useRouter();
@@ -72,24 +74,6 @@ const ScreenRegister = () => {
     return true;
   };
 
-  // Iconos de Actividades
-  const activityIcons = {
-    Yoga: "self-improvement",
-    Correr: "directions-run",
-    Natación: "pool",
-    Fútbol: "sports-soccer",
-    Ciclismo: "pedal-bike",
-    Gimnasio: "fitness-center",
-    Calistenia: "fitness-center",
-    Baseball: "sports-baseball",
-    Basketball: "sports-basketball",
-    Voleibol: "sports-volleyball",
-    Senderismo: "hiking",
-    Patinaje: "roller-skating",
-    Esquí: "ac-unit",
-    Otro: "help-outline", // Ícono genérico para la opción "Otro"
-  };
-
   // Selección de imagen
   const handleImagePick = async () => {
     try {
@@ -136,7 +120,7 @@ const ScreenRegister = () => {
           ? await uploadImageToImgBB(profileImage)
           : "https://via.placeholder.com/150";
 
-      // Datos del usuario
+      // Datos del Registro de usuario
       const userData = {
         user_ID: user.uid,
         email,
@@ -178,12 +162,11 @@ const ScreenRegister = () => {
   };
 
 
-  // 📤 Subir imagen a ImgBB
+  // 📤 Registrar y Subir imagen a ImgBB
   const uploadImageToImgBB = async (imageUri) => {
     const apiKey = "1a6c799783a8f073d11576343f1d0fbb"; // ✅ Tu API Key de ImgBB
     const formData = new FormData();
   
-    // Ajuste para React Native: uso de blob para que axios lo reconozca correctamente
     formData.append("image", {
       uri: imageUri,
       type: "image/jpeg",
@@ -226,7 +209,7 @@ const ScreenRegister = () => {
         >
           <StatusBar style="light" />
 
-        {/* CArgando Loading */}
+        {/* Cargando Loading */}
           {isLoading && (
             <View className="absolute w-screen h-full inset-0 bg-black/50 flex justify-center items-center z-50">
               <ActivityIndicator size="large" color="#3CC4B9" />
@@ -360,21 +343,7 @@ const ScreenRegister = () => {
         {/* Actividades Section */}
           <Text className="text-xl font-bold text-[#3CC4B9] mb-4 text-center">Selecciona tus actividades</Text>
           <View className="flex flex-wrap flex-row gap-2 mb-6 justify-center">
-            {[    "Yoga",
-             "Correr",
-             "Natación",
-             "Fútbol",
-             "Ciclismo",
-             "Gimnasio",
-             "Calistenia",
-             "Baseball",
-             "Basketball",
-             "Voleibol",
-             "Senderismo",
-             "Patinaje",
-             "Esquí",
-             "Otro",
-            ].map((activity) => (
+            {activityService.getActivityNames().map((activity) => (
               <TouchableOpacity
                 key={activity}
                 onPress={() => handleSelectActivity(activity)}
@@ -392,9 +361,9 @@ const ScreenRegister = () => {
                 </Text>
 
               <MaterialIcons
-                 name={activityIcons[activity]} // Obtén el ícono correspondiente
-                 size={16}
-                 color={activities.includes(activity) ? "#FFFFFF" : "#3CC4B9"}
+                   name={activityService.getActivityIcon(activity)}
+                   size={16}
+                   color={activities.includes(activity) ? "#FFFFFF" : "#3CC4B9"}
                />
               </TouchableOpacity>
             ))}
