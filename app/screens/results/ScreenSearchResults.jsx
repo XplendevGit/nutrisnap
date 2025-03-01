@@ -13,6 +13,9 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 
+// ✅ Importamos la imagen por defecto
+import DefaultImage from "../../../assets/images/notfound.png"; // Asegúrate de colocar la imagen en esta ruta
+
 const ScreenSearchResults = () => {
   const { searchTerm: initialSearchTerm } = useLocalSearchParams();
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm || "");
@@ -94,7 +97,7 @@ const ScreenSearchResults = () => {
       case "e":
         return "bg-red-500"; // No saludable
       default:
-        return "bg-gray-400"; // Sin datos
+        return "bg-blue-400"; // Sin datos
     }
   };
 
@@ -103,24 +106,27 @@ const ScreenSearchResults = () => {
       item.brands?.toLowerCase().includes(brand.toLowerCase())
     );
 
+    // ✅ Verificamos si hay imagen o usamos la imagen por defecto
+    const productImage = item.image_front_url ? { uri: item.image_front_url } : DefaultImage;
+
     return (
       <TouchableOpacity
         key={item.code || uuidv4()}
-        className={`rounded-lg p-4 mb-4 shadow-md border-2 border-gray-200 flex-row items-center ${getBackgroundColor(item.nutrition_grades)}`}
+        className={`rounded-lg p-4 mb-4 shadow-md flex-row items-center ${getBackgroundColor(item.nutrition_grades)}`}
         onPress={() =>
           router.push({ pathname: "./ScreenProductDetail", params: { product: JSON.stringify(item) } })
         }
       >
         {/* Imagen del Producto */}
         <Image
-          source={{ uri: item.image_front_url || "https://via.placeholder.com/100" }}
+          source={productImage}
           className="w-20 h-20 rounded-full border-2 border-white shadow-md"
         />
 
         {/* Información del Producto */}
         <View className="ml-4 flex-1">
-          <Text className="text-lg font-bold text-white">{item.product_name}</Text>
-          <Text className="text-white text-sm">{item.brands}</Text>
+          <Text className="text-lg font-bold text-black/70">{item.product_name}</Text>
+          <Text className="text-black/70 text-sm">{item.brands}</Text>
 
           {/* Indicador de marca chilena */}
           {brandIsChilean && <Text className="text-sm text-white font-bold">🇨🇱 Producto Chileno</Text>}
@@ -139,18 +145,46 @@ const ScreenSearchResults = () => {
   return (
     <View className="flex-1 bg-[#F5F7FA] p-4 pt-12">
       {/* 📢 Título Principal */}
-      <Text className="text-2xl font-bold text-gray-800 mb-4">Busca aquí:</Text>
+      <Text className="text-2xl font-bold text-gray-800 mb-4">🍏 Busca aquí:</Text>
 
       {/* 🔍 Barra de Búsqueda */}
       <TextInput
         value={searchTerm}
         onChangeText={setSearchTerm}
-        placeholder="🔍 Buscar producto..."
+        placeholder="🔍 Buscar alimento..."
         className="bg-white rounded-lg px-4 py-3 mb-4 text-gray-700 shadow-md"
       />
 
-      {/* 📢 Título Secundario */}
-      <Text className="text-2xl font-bold text-gray-800 mb-4">🍏 Alimentos Encontrados</Text>
+       {/* ✅ Inserta la leyenda aquí */}
+  <View className="mb-4">
+    <View className="bg-[#3CC4B9]/90 rounded-lg shadow-md p-4">
+
+      <View className="flex-row items-center mt-2">
+        <View className="w-3 h-3 rounded-full bg-green-500 mr-2"></View>
+        <Text className="text-gray-700 text-sm">Alimento muy saludable (Nutriscore A)</Text>
+      </View>
+
+      <View className="flex-row items-center mt-2">
+        <View className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></View>
+        <Text className="text-gray-700 text-sm">Intermedio (Nutriscore C)</Text>
+      </View>
+
+      <View className="flex-row items-center mt-2">
+        <View className="w-3 h-3 rounded-full bg-orange-400 mr-2"></View>
+        <Text className="text-gray-700 text-sm">Consumo ocasional (Nutriscore D)</Text>
+      </View>
+
+      <View className="flex-row items-center mt-2">
+        <View className="w-3 h-3 rounded-full bg-red-500 mr-2"></View>
+        <Text className="text-gray-700 text-sm">Evitar consumo frecuente (Nutriscore E)</Text>
+      </View>
+
+      <View className="flex-row items-center mt-2">
+        <View className="w-3 h-3 rounded-full bg-blue-400 mr-2"></View>
+        <Text className="text-gray-700 text-sm">Sin información nutricional</Text>
+      </View>
+    </View>
+  </View>
 
       {/* ⏳ Loading */}
       {loading && results.length === 0 ? (
