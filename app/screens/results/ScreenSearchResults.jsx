@@ -1,106 +1,158 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
-import axios from 'axios';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { v4 as uuidv4 } from 'uuid'; // Instala: npm install uuid
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  TextInput,
+} from "react-native";
+import axios from "axios";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { v4 as uuidv4 } from "uuid";
+import _ from "lodash";
 
 const ScreenSearchResults = () => {
   const { searchTerm: initialSearchTerm } = useLocalSearchParams();
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm || '');
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm || "");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const router = useRouter();
 
-  const chileanBrands = ['Colún', 'Soprole', 'Watts', 'Carozzi', 'Lucchetti', 'PF', 'Ideal', 'Loncoleche'];
+  // Lista de marcas chilenas reconocidas
+  const chileanBrands = ["Colún", "Soprole", "Watts", "Carozzi", "Lucchetti", "PF", "Ideal", "Loncoleche"];
 
-  useEffect(() => {
-    if (searchTerm.trim().length >= 2) {
-      setPage(1);
-      setResults([]);
-      fetchProducts(1, searchTerm);
-    }
-  }, [searchTerm]);
+  // Caché local para evitar repetidas peticiones
+  const productCache = {};
 
-  const fetchProducts = async (pageNumber, query) => {
-    if (loading) return;
-    setLoading(true);
+  // 🔥 Función con debounce para optimizar la búsqueda
+  const fetchProducts = useCallback(
+    _.debounce(async (query) => {
+      if (!query || query.length < 2) return;
+      if (loading) return;
 
-    try {
-      const response = await axios.get(`https://cl.openfoodfacts.org/cgi/search.pl`, {
-        params: {
-          search_terms: query,
-          search_simple: 1,
-          action: 'process',
-          json: 1,
-          page: pageNumber,
-          page_size: 20,
-          country: 'Chile',
-        },
-      });
+      setLoading(true);
 
-      const fetchedProducts = response.data.products || [];
+      try {
+        if (productCache[query]) {
+          console.log("🟢 Cargando datos desde caché...");
+          setResults(productCache[query]);
+          setLoading(false);
+          return;
+        }
 
-      // Eliminar duplicados por 'code' y asignar claves únicas
-      const uniqueCodes = new Set();
-      const uniqueProducts = fetchedProducts
-        .filter((item) => item.product_name && item.brands)
-        .map((item) => {
-          const code = item.code && !uniqueCodes.has(item.code) ? item.code : uuidv4();
-          uniqueCodes.add(code);
-          return { ...item, uniqueKey: code };
+        const response = await axios.get(`https://cl.openfoodfacts.org/cgi/search.pl`, {
+          params: {
+            search_terms: query,
+            search_simple: 1,
+            action: "process",
+            json: 1,
+            page: 1,
+            page_size: 20,
+            country: "Chile",
+          },
         });
 
-      // Priorizar marcas chilenas
-      const sortedProducts = uniqueProducts.sort((a, b) => {
-        const aChilean = chileanBrands.some((brand) => a.brands?.toLowerCase().includes(brand.toLowerCase()));
-        const bChilean = chileanBrands.some((brand) => b.brands?.toLowerCase().includes(brand.toLowerCase()));
-        return aChilean === bChilean ? 0 : aChilean ? -1 : 1;
-      });
+        const fetchedProducts = response.data.products || [];
 
-      setResults((prev) => (pageNumber === 1 ? sortedProducts : [...prev, ...sortedProducts]));
-      setHasMore(fetchedProducts.length > 0);
-      setPage(pageNumber + 1);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
+        productCache[query] = fetchedProducts;
+
+        setResults(fetchedProducts);
+        setHasMore(fetchedProducts.length > 0);
+        setPage(2);
+      } catch (error) {
+        console.error("❌ Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }, 1000),
+    []
+  );
+
+  useEffect(() => {
+    fetchProducts(searchTerm);
+  }, [searchTerm]);
+
+  const handleLoadMore = () => {
+    if (!loading && hasMore) fetchProducts(searchTerm);
+  };
+
+  // 🎨 Función para asignar color según la calidad del producto
+  const getBackgroundColor = (nutriscore) => {
+    switch (nutriscore) {
+      case "a":
+        return "bg-green-500"; // Saludable
+      case "b":
+        return "bg-green-400";
+      case "c":
+        return "bg-yellow-500"; // Intermedio
+      case "d":
+        return "bg-orange-400";
+      case "e":
+        return "bg-red-500"; // No saludable
+      default:
+        return "bg-gray-400"; // Sin datos
     }
   };
 
-  const handleLoadMore = () => {
-    if (!loading && hasMore) fetchProducts(page, searchTerm);
+  const renderItem = ({ item }) => {
+    const brandIsChilean = chileanBrands.some((brand) =>
+      item.brands?.toLowerCase().includes(brand.toLowerCase())
+    );
+
+    return (
+      <TouchableOpacity
+        key={item.code || uuidv4()}
+        className={`rounded-lg p-4 mb-4 shadow-md border-2 border-gray-200 flex-row items-center ${getBackgroundColor(item.nutrition_grades)}`}
+        onPress={() =>
+          router.push({ pathname: "./ScreenProductDetail", params: { product: JSON.stringify(item) } })
+        }
+      >
+        {/* Imagen del Producto */}
+        <Image
+          source={{ uri: item.image_front_url || "https://via.placeholder.com/100" }}
+          className="w-20 h-20 rounded-full border-2 border-white shadow-md"
+        />
+
+        {/* Información del Producto */}
+        <View className="ml-4 flex-1">
+          <Text className="text-lg font-bold text-white">{item.product_name}</Text>
+          <Text className="text-white text-sm">{item.brands}</Text>
+
+          {/* Indicador de marca chilena */}
+          {brandIsChilean && <Text className="text-sm text-white font-bold">🇨🇱 Producto Chileno</Text>}
+
+          {/* Nutrientes destacados */}
+          <View className="mt-2">
+            <Text className="text-white text-xs">🔥 Calorías: {item.nutriments["energy-kcal"] || "N/A"} kcal</Text>
+            <Text className="text-white text-xs">💪 Proteínas: {item.nutriments.proteins || "N/A"}g</Text>
+            <Text className="text-white text-xs">🥦 Fibra: {item.nutriments.fiber || "N/A"}g</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      key={item.uniqueKey}
-      className="bg-white rounded-lg shadow-md p-4 mb-4 flex-row items-center"
-      onPress={() => router.push({ pathname: './ScreenProductDetail', params: { product: JSON.stringify(item) } })}
-    >
-      <Image
-        source={{ uri: item.image_front_url || 'https://via.placeholder.com/100' }}
-        className="w-16 h-16 rounded-md"
-      />
-      <View className="ml-4 flex-1">
-        <Text className="text-lg font-semibold">{item.product_name}</Text>
-        <Text className="text-gray-500">{item.brands}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   return (
-    <View className="flex-1 bg-[#F5F7FA] p-4">
+    <View className="flex-1 bg-[#F5F7FA] p-4 pt-12">
+      {/* 📢 Título Principal */}
+      <Text className="text-2xl font-bold text-gray-800 mb-4">Busca aquí:</Text>
+
+      {/* 🔍 Barra de Búsqueda */}
       <TextInput
         value={searchTerm}
         onChangeText={setSearchTerm}
-        placeholder="Buscar producto..."
+        placeholder="🔍 Buscar producto..."
         className="bg-white rounded-lg px-4 py-3 mb-4 text-gray-700 shadow-md"
       />
 
-      <Text className="text-2xl font-bold mb-4">Resultados para "{searchTerm}"</Text>
+      {/* 📢 Título Secundario */}
+      <Text className="text-2xl font-bold text-gray-800 mb-4">🍏 Alimentos Encontrados</Text>
 
+      {/* ⏳ Loading */}
       {loading && results.length === 0 ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#3CC4B9" />
@@ -109,7 +161,7 @@ const ScreenSearchResults = () => {
       ) : results.length > 0 ? (
         <FlatList
           data={results}
-          keyExtractor={(item) => item.uniqueKey}  // ¡Clave única garantizada!
+          keyExtractor={(item) => item.code || uuidv4()}
           renderItem={renderItem}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
