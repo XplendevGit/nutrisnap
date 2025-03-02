@@ -120,7 +120,7 @@ const ScreenSearchResults = () => {
         {/* Imagen del Producto */}
         <Image
           source={productImage}
-          className="w-20 h-20 rounded-full border-2 border-white shadow-md"
+          className="w-20 h-20 rounded-md border-2 border-white shadow-md"
         />
 
         {/* Información del Producto */}
