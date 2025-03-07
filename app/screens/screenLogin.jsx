@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -50,6 +50,8 @@ const ScreenLogin = ({
     webClientId: "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com",
   });
 
+  const redirected = useRef(false); // 🔥 Controla si ya redirigimos para evitar duplicados
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
@@ -79,16 +81,18 @@ const ScreenLogin = ({
     });
   
     setTimeout(() => {
-      // Redirigir directamente después de 3 segundos
+      if (!redirected.current) {
+      redirected.current = true;
+      // Redirigir directamente después de 1.5 segundos
       router.replace("../screens/screenMain");
-      setAlert({ visible: false });
-    }, 2000);
+      }
+    }, 1500);
   };
   
   const handleAlertClose = () => {
+    if (redirected.current) {
+      redirected.current = true; // 🛑 Evita doble redirección
     setAlert({ visible: false });
-    // Redirigir si es un éxito
-    if (alert.type === "success") {
       router.replace("../screens/screenMain");
     }
   };

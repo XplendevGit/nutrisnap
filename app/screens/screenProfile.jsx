@@ -15,11 +15,23 @@ import { doc, getDoc } from "firebase/firestore";
 import { MotiView } from "moti";
 import { ActivityIndicator } from "react-native";
 import activityService from "../services/ActivityService";
+import CustomAlert from "../../app/components/customAlert"; 
 
 const ScreenProfile = () => {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga
+  const [alert, setAlert] = useState({ visible: false, type: "", title: "", message: "" }); // ✅ Estado del Alert
+
+  // ✅ Función para mostrar alertas con CustomAlert
+  const showAlert = (type, title, message) => {
+    setAlert({ visible: true, type, title, message });
+  };
+
+  // ✅ Función para cerrar alertas
+  const handleAlertClose = () => {
+    setAlert({ visible: false });
+  };
 
   // Cargar datos del usuario desde Firestore
   useEffect(() => {
@@ -37,17 +49,17 @@ const ScreenProfile = () => {
           if (userDoc.exists()) {
             setUserData(userDoc.data()); // Guardar datos en el estado
           } else {
-            Alert.alert("Error", "No se encontraron datos del usuario.");
+            showAlert("error", "Error", "No se encontraron datos del usuario."); 
           }
         } else {
-          Alert.alert("Error", "No estás autenticado.");
+          showAlert("error", "Error", "No estás autenticado.");
           router.replace("../screens/screenLogin");
         }
       } catch (error) {
         console.error("Error al cargar datos del usuario:", error.message);
-        Alert.alert("Error", "Hubo un problema al cargar tu perfil.");
+        showAlert("error", "Error", "Hubo un problema al cargar tu perfil.");
       } finally {
-        setIsLoading(false); // Ocultar cargador al terminar la consulta
+        setTimeout(() => setIsLoading(false), 2000); // Esperamos 2 segundos antes de ocultar el loading
       }
     };
   
@@ -58,11 +70,16 @@ const ScreenProfile = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      Alert.alert("Sesión cerrada", "Has salido de tu cuenta correctamente.");
-      router.replace("../screens/screenLogin");
+      showAlert("success", "Sesión cerrada", "Has salido de tu cuenta correctamente.")
+
+      setTimeout(() => {
+        handleAlertClose() // Cierra el alerta antes de redirigir
+        router.replace("../screens/screenLogin");
+      },700); // Espera 1 segundos para permitir que el alerta sea visible
+      
     } catch (error) {
       console.error("Error al cerrar sesión:", error.message);
-      Alert.alert("Error", "No se pudo cerrar sesión. Intenta nuevamente.");
+      showAlert("error", "Error", "No se pudo cerrar sesión. Intenta nuevamente.")
     }
   };
 
@@ -78,7 +95,11 @@ const ScreenProfile = () => {
 
   return (
     <View className="flex-1 bg-white/40">
+      {/* ✅ CustomAlert siempre visible en la pantalla */}
+      <CustomAlert visible={alert.visible} type={alert.type} title={alert.title} message={alert.message} onClose={handleAlertClose} />
+
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+
         {/* Encabezado */}
         <View className="bg-[#3CC4B9] h-48 w-full rounded-b-[12px] items-center justify-end relative">
           
